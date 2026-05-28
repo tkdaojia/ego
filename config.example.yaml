@@ -1,0 +1,85 @@
+# system configuration
+system:
+  addr: 787
+  path: 'data/upfile'
+  db-type: mysql #mysql pgsql sqlite
+  tabpre: 'dy_'
+  host : 'http://localhost:'
+  webroute: 'ego'
+  webname: 'EGO'
+  webversion: 'V1.0.5'
+  cookiename: 'egoframe'
+  appid: '32d1198e3a2268d29069ab1ea3fbu7e8'
+
+# mysql connect configuration
+mysql:
+  path: 'localhost'
+  port: "3306"
+  prefix: "dy_"
+  config: 'charset=utf8mb4&parseTime=True&loc=Local'
+  db-name: 'egosrc'
+  username: 'root'
+  password: 'root'
+  max-idle-conns: 10
+  max-open-conns: 100
+  conn-max-lifetime: 0
+  log-mode: "error"
+  log-zap: false
+  singular: true
+
+pgsql:
+  path: "localhost"
+  port: "5432"
+  prefix: "dy_"
+  config: "sslmode=disable TimeZone=Asia/Shanghai"
+  db-name: "egosrc"
+  username: "ego"
+  password: "ego"
+  max-idle-conns: 10
+  max-open-conns: 100
+  conn-max-lifetime: 0
+  log-mode: "error"
+  log-zap: false
+  singular: true
+
+sqlite:
+  path: ""
+  port: ""
+  config: ""
+  db-name: ""
+  username: ""
+  password: ""
+  max-idle-conns: 10
+  max-open-conns: 100
+  conn-max-lifetime: 0
+  log-mode: ""
+  log-zap: false
+
+# jwt configuration
+jwt:
+  signing-key: 'qmPlus'
+  expires-time: 604800
+  buffer-time: 86400
+
+# zap logger configuration
+zap:
+  level: 'info'
+  format: 'console'
+  prefix: '[CBC_LOG]'
+  director: 'data/log'
+  link-name: 'latest_log'
+  show-line: true
+  encode-level: 'LowercaseColorLevelEncoder'
+  stacktrace-key: 'stacktrace'
+  log-in-console: false
+
+# redis configuration
+redis:
+  db: 0
+  addr: '127.0.0.1:6379'
+  password: ''
+
+
+
+
+
