@@ -1,0 +1,169 @@
+<? define "sysdict/set.htm" ?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+</head>
+<body>
+<div class="layui-form model-form" lay-filter="layuiadmin-app-form-list" id="layuiadmin-app-form-list" style="padding: 20px 30px 0 0;">
+    <input name="id" type="hidden" value="<? .parval.ID ?>"/>
+    <input name="dict_id" type="hidden" value="<? .info.id ?>"/>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">key</label>
+        <div class="layui-input-inline">
+            <input type="number" name="keyid" value="<?.parval.Keyid?>" lay-verify="required" placeholder="请输入key" autocomplete="off" class="layui-input">
+        </div>
+        <label class="layui-form-label">keystr</label>
+        <div class="layui-input-inline">
+            <input type="text" name="keystr" value="<?.parval.Keystr?>" autocomplete="off" class="layui-input">
+        </div>
+        <label class="layui-form-label">value</label>
+        <div class="layui-input-inline">
+            <input type="text" name="defaultval" value="<?.parval.Defaultval?>" autocomplete="off" class="layui-input">
+        </div>
+        <label class="layui-form-label">state</label>
+        <div class="layui-input-inline">
+            <input type="number" name="state" value="<?.parval.State?>" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-card-body">
+        <table id="LAY-app-info-list" lay-filter="LAY-app-info-list"></table>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="layuiadmin-app-form-submit" id="layuiadmin-app-form-submit" value="确认添加">
+        <input type="button" lay-submit lay-filter="layuiadmin-app-form-edit" id="layuiadmin-app-form-edit" value="确认编辑">
+    </div>
+</div>
+
+<script type="text/html" id="tbBasicTbBar">
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">修改</a>
+</script>
+
+<script type="text/html" id="statusTpl">
+    {{#  if(d.state == 1){ }}
+    <button class="layui-btn layui-btn-xs">正常</button>
+    {{#  } else { }}
+    <button class="layui-btn layui-btn-primary layui-btn-xs">不可用</button>
+    {{#  } }}
+</script>
+
+<script type="text/html" id="svnLook">
+    <span class="layui-text">
+    {{# if (d.svn > 0) { }}
+        <a href="javascript:;" lay-event="look">
+            <i class="layui-icon layui-icon-about"></i> {{d.svn}}
+        </a>
+    {{# } else { }}
+          无
+    {{# } }}
+    </span>
+</script>
+
+<script type="text/javascript" src="/static/layui/layui.js"></script>
+<script>
+    layui.use(function () {
+        var $ = layui.$
+            ,form = layui.form
+            ,table = layui.table;
+
+        // 监听提交
+        form.on('submit(layuiadmin-app-form-submit)', function(data){
+            var field = data.field;
+            var index = parent.layer.getFrameIndex(window.name);
+
+            // 💡 优雅重构点 1：配置化批量清洗数字字段，杜绝 if 面条代码
+            var numberFields = ['id', 'dict_id', 'keyid', 'state'];
+            numberFields.forEach(function (key) {
+                // 如果存在且非空，则强制转为数字，否则安全置为 0，防止后端反序列化失败
+                field[key] = (field[key] !== undefined && field[key] !== "") ? Number(field[key]) : 0;
+            });
+
+            var t = layer.load(1);
+
+            $.ajax({
+                url: '?module=sysdict&act=main&do=set',
+                data: JSON.stringify(field),
+                type: 'post',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (res) {
+                    if (res.code === 0) {
+                        layer.msg('操作成功', {icon: 1, time: 1000}, function(){
+                            tableIns.reload();
+                        });
+                    } else {
+                        layer.msg(res.msg || '操作失败', {icon: 5});
+                    }
+                    layer.close(t);
+                },
+                error: function (xhr) {
+                    layer.close(t);
+                    layer.msg('网络异常，请稍后再试', {icon: 5});
+                }
+            });
+        });
+
+        // 渲染表格
+        var tableIns = table.render({
+            elem: '#LAY-app-info-list'
+            ,height: 535
+            ,url: '?module=sysdict&act=main&do=get_setdata&id=<? .info.id ?>'
+            ,cols: [[
+                {field: 'state', title: '状态', sort:true, templet: '#statusTpl', width: 100 }
+                ,{field: 'key', title: '键（key）', sort:true, width: 120}
+                ,{field: 'value', title: '值（value）'}
+                ,{field: 'keystr', title: '字符键（keystr）', width: 160}
+                ,{field: 'svn', title: '修改次数', sort:true, toolbar: '#svnLook' }
+                ,{title: '操作', toolbar: '#tbBasicTbBar', width: 220}
+    ]]
+    ,page: false
+            ,limit: 30
+            ,text: { none: '暂无数据' }
+    });
+
+        // 工具条事件
+        table.on('tool(LAY-app-info-list)', function(obj){
+            var data = obj.data;
+            if (obj.event == 'edit'){
+                location.href = '?module=sysdict&act=main&do=set&id=<?.parid?>&bid='+data.id;
+            } else if (obj.event == 'look') {
+                layer.open({
+                    type: 1,
+                    title: false,
+                    area: ['90%', '90%'],
+                    shade: .01,
+                    shadeClose: true,
+                    content: '<div style="padding:15px;"><table id="lookSVNTable" lay-filter="lookSVNTable"></table></div>', // 💡 优化：加 padding 撑开表格边距
+                    success: function (layero) {
+                        table.render({
+                            elem: '#lookSVNTable',
+                            url: '?module=sysdict&act=main&do=svngetdata&parvalid=' + data.id,
+                            page: true,
+                            cellMinWidth: 100,
+                            cols: [[
+                                {type: 'numbers'},
+                                {field: 'oldstr', title: '原数据'},
+                                {field: 'newstr', title: '新数据'},
+                                {field: 'post_user', title: '修改人', width:120},
+                                {field: 'ptime', title: '时间', width:170},
+                            ]],
+                            done: function () {
+                                $(layero).find('.layui-table-view').css('margin', '0');
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>
+<? end ?>

@@ -1,0 +1,50 @@
+<? define "system/error.htm" ?>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>错误提示</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f5f7fa; font-family: "Microsoft YaHei", sans-serif; }
+        .error-box {
+            max-width: 500px;
+            margin: 100px auto;
+            padding: 40px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        .error-title {
+            font-size: 20px;
+            color: #f56c6c;
+            margin-bottom: 20px;
+        }
+        .error-msg {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .back-btn {
+            display: inline-block;
+            padding: 10px 24px;
+            background: #409eff;
+            color: #fff;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+        .back-btn:hover { background: #66b1ff; }
+    </style>
+</head>
+<body>
+<div class="error-box">
+    <div class="error-title">错误提示</div>
+    <div class="error-msg"><?.msg ?></div>
+    <? if .back ?>
+    <a href="javascript:history.back()" class="back-btn">返回上一页</a>
+    <? end ?>
+</div>
+</body>
+</html>
+<? end ?>

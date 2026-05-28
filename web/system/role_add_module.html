@@ -1,0 +1,94 @@
+<? define "sysrole/addmodule.htm" ?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+</head>
+<body>
+
+<div class="layui-form model-form" lay-filter="layuiadmin-app-form-list" id="layuiadmin-app-form-list" style="padding: 20px 30px 0 0;">
+    <input name="id" type="hidden" value="<? .id ?>" />
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">菜单</label>
+        <div class="layui-input-inline">
+            <div id="demo2" style="width:520px;"></div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="layuiadmin-app-form-submit" id="layuiadmin-app-form-submit" value="确认添加">
+        <input type="button" lay-submit lay-filter="layuiadmin-app-form-edit" id="layuiadmin-app-form-edit" value="确认编辑">
+    </div>
+</div>
+
+<script src="/static/layui/layui.js"></script>
+<script src="/static/layui/extend/xm-select.js"></script>
+<script src="/static/layui/extend/axios.min.js"></script>
+<script>
+    layui.use(function () {
+        var $ = layui.$;
+        var layer = layui.layer;
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(layuiadmin-app-form-submit)', function(data){
+            var field = data.field;
+            var index = parent.layer.getFrameIndex(window.name);
+            var t = layer.load(1);
+
+            // JSON 提交方式（和第一个页面完全一致）
+            $.ajax({
+                url: '?module=sysrole&act=main&do=updatemodule',
+                data: JSON.stringify(field),
+                type: 'post',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (res) {
+                    if (res.code === 0) {
+                        parent.location.reload();
+                        parent.layer.close(index);
+                    }else {
+                        layer.msg(res.msg || '操作失败', {icon: 5});
+                    }
+                    layer.close(t);
+                },
+                error: function () {
+                    layer.msg('请求异常', {icon: 5});
+                    layer.close(t);
+                }
+            });
+        });
+    });
+
+    var demo2 = xmSelect.render({
+        el: '#demo2',
+        name: 'mid',
+        height: 'auto',
+        filterable: true,
+        clickClose: false,
+        tree: {
+            show: true,
+        },
+        data: [],
+    })
+
+    axios({
+        method: 'get',
+        url: '?module=sysrole&act=main&do=moduletree&id=<? .id ?>',
+    }).then(response => {
+        var res = response.data;
+        demo2.update({
+            data: res.data,
+            autoRow: true,
+        })
+    });
+</script>
+</body>
+</html>
+<? end ?>

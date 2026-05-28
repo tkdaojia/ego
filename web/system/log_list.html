@@ -1,0 +1,163 @@
+<? define "syslog/syslogList.htm" ?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>系统操作日志</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+</head>
+<body>
+
+<div class="layui-fluid" style="padding: 20px 15px 15px 15px;">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <form class="layui-form toolbar table-tool-mini" style="margin-bottom: 10px;">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <input type="text" name="username" placeholder="操作账号" autocomplete="off" class="layui-input layui-input-sm">
+                    </div>
+                    <div class="layui-inline">
+                        <input type="text" name="module" placeholder="模组(module)" autocomplete="off" class="layui-input layui-input-sm">
+                    </div>
+                    <div class="layui-inline">
+                        <select name="status" lay-search>
+                            <option value="">全部状态</option>
+                            <option value="1">成功</option>
+                            <option value="2">失败</option>
+                        </select>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="LAY-app-search">
+                            <i class="layui-icon layui-icon-search"></i>搜索
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <table id="LAY-table-list" lay-filter="LAY-table-list"></table>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="table-do-tool">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"><i class="layui-icon layui-icon-about"></i>详情</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+</script>
+
+<script type="text/html" id="statusTpl">
+    {{# if (d.status == 1) { }}
+    <span class="layui-badge layui-bg-green">成功</span>
+    {{# } else { }}
+    <span class="layui-badge layui-bg-red">失败</span>
+    {{# } }}
+</script>
+
+<script type="text/html" id="methodTpl">
+    {{# if (d.method == 'POST') { }}
+    <span class="layui-badge-rim layui-font-orange">POST</span>
+    {{# } else if (d.method == 'GET') { }}
+    <span class="layui-badge-rim layui-font-blue">GET</span>
+    {{# } else if (d.method == 'DELETE') { }}
+    <span class="layui-badge-rim layui-font-red">DELETE</span>
+    {{# } else { }}
+    <span class="layui-badge-rim">{{d.method}}</span>
+    {{# } }}
+</script>
+
+<script type="text/html" id="latencyTpl">
+    {{# if (d.latency > 1000) { }}
+    <span class="layui-font-red" style="font-weight: bold;">{{ d.latency }} ms</span>
+    {{# } else { }}
+    <span class="layui-font-green">{{ d.latency }} ms</span>
+    {{# } }}
+</script>
+
+<script type="text/javascript" src="/static/layui/layui.js"></script>
+<script>
+    layui.use(function () {
+        var $ = layui.$
+            ,form = layui.form
+            ,table = layui.table;
+
+        // 监听搜索提交
+        form.on('submit(LAY-app-search)', function(data){
+            var field = data.field;
+            table.reload('LAY-table-list', {
+                page: { curr: 1 },
+                where: field
+            });
+            return false;
+        });
+
+        // 初始化表格渲染
+        table.render({
+            elem: '#LAY-table-list'
+            ,height: 'full-120'
+            ,url: '?module=syslog&act=audit&do=getdata'
+            ,cellMinWidth: 110
+            ,cols: [[
+                {field: 'id', title: 'ID', width: 80, sort: true}
+                ,{field: 'username', title: '操作账号', width: 110}
+                ,{field: 'nickname', title: '用户昵称', width: 110}
+                ,{field: 'description', title: '操作描述', minWidth: 130}
+                ,{field: 'module', title: '模块', width: 100}
+                ,{field: 'action', title: '大类', width: 100}
+                ,{field: 'do', title: '动作', width: 150}
+                ,{field: 'method', title: '方法', width: 90, templet: '#methodTpl', align: 'center'}
+                ,{field: 'url', title: '请求URL', minWidth: 150}
+                ,{field: 'ip', title: 'IP地址', width: 130}
+                ,{field: 'status', title: '状态', width: 85, templet: '#statusTpl', align: 'center'}
+                ,{field: 'latency', title: '耗时', width: 95, templet: '#latencyTpl', align: 'right'}
+                ,{field: 'createdAt', title: '记录时间', width: 170, sort: true}
+                ,{title: '操作', width: 150, align: 'center', fixed: 'right', toolbar: '#table-do-tool'}
+            ]]
+            ,page: true
+            ,limit: 20
+            ,limits: [10, 20, 50, 100]
+            ,text: { none: '暂无日志数据' }
+        });
+
+        // 监听行工具条
+        table.on('tool(LAY-table-list)', function(obj){
+            var data = obj.data;
+            var id = data.id;
+
+            if (obj.event === 'del') {
+                layer.confirm('确定永久删除该条操作日志？', {icon: 3, title: '提示'}, function(index){
+                    $.ajax({
+                        url: '?module=syslog&act=main&do=del&id=' + id,
+                        type: 'get',
+                        dataType: 'json',
+                        success: function (res) {
+                            if (res.success || res.code === 0) {
+                                table.reload("LAY-table-list");
+                                layer.msg('删除成功', {icon: 1});
+                            } else {
+                                layer.msg(res.msg || '操作失败', {icon: 5});
+                            }
+                        }
+                    });
+                });
+            } else if (obj.event === 'detail') {
+                // 点击详情弹框查看 JSON 文本和大文本内容
+                layer.open({
+                    type: 2
+                    ,title: '日志详情 (ID: ' + id + ')'
+                    ,content: '?module=syslog&act=audit&do=detail&id=' + id
+                    ,area: ['1200px', '800px']
+                    ,btn: ['关闭']
+                    ,resize: true
+                    ,yes: function(index){
+                        layer.close(index);
+                    }
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>
+<? end ?>

@@ -1,0 +1,219 @@
+<? define "sysrole/list.htm" ?>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+	<!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+	<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+
+<!-- 正文开始 -->
+<div class="layui-fluid" style="padding: 20px 15px 15px 15px;">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <!-- 表格工具栏 -->
+            <form class="layui-form toolbar table-tool-mini">
+                <div class="layui-form-item">
+            
+					<div class="layui-inline" >
+
+						<button class="layui-btn icon-btn layui-btn-radius layui-btn-sm" id="inputBtnAdd"  type="button">
+						  <i class="layui-icon layui-icon-addition layuiadmin-button-btn"></i>新增
+						</button>
+					</div>
+                </div>
+            </form>
+            <!-- 数据表格 -->
+            <table id="LAY-app-role-list" lay-filter="LAY-app-role-list"></table>
+			<script type="text/html" id="tableBarMenus">
+			  <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="menu"><i class="layui-icon layui-icon-windows"></i>菜单</a>
+			  <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="module"><i class="layui-icon layui-icon-auz"></i>模块</a>
+			  <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+			  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+			</script>
+
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="/static/layui/layui.js"></script>
+<script>
+    layui.use(function () {
+        var $ = layui.$
+            ,form = layui.form
+            ,table = layui.table;
+
+		  
+    //监听搜索
+    form.on('submit(LAY-app-search)', function(data){
+      var field = data.field;
+      
+      //执行重载
+      table.reload('LAY-app-role-list', {
+        where: field
+      });
+	  return false;
+    });
+
+
+
+    table.render({
+  	elem: '#LAY-app-role-list'
+	,height: 'full-98'
+  	,url:  '?module=sysrole&act=main&do=getdata'
+	,cellMinWidth: 100
+  	,cols: [[
+	    {type: 'numbers'},
+            {field: 'name', title: '标识'},
+		{field: 'rname', title: '名称'},
+		{field: 'sysgroup', title: '系统组'},
+		{field: 'remarks', title: '备注'},
+		{title: '操作', width:	530, align:	'center', fixed: 'right', toolbar: '#tableBarMenus'}
+
+  	]]
+  	,page: false
+  	,limit:	30
+  	,limits: [30,60,120,240]
+  	,text: {
+		none:'暂无数据'
+		}
+    });
+
+	 /* 表格工具条点击事件 */
+	table.on('tool(LAY-app-role-list)', function (obj) {
+		var data = obj.data; // 获得当前行数据
+		var id = data.id;
+		
+		if(obj.event === 'del'){
+        layer.confirm('确定删除？', function(index){
+          
+          $.ajax({
+                url: '?module=sysrole&act=main&do=del&id='+id,
+                type: 'get',
+                dataType: 'json',
+                success: function (res) {
+                    if (res.success) {
+						table.reload("LAY-app-role-list");
+						layer.msg('完成',{icon:1});
+                    }else {
+						if (res.msg) {
+							layer.msg(res.msg, {icon: 5});
+						} else layer.msg('失败', {icon: 5});
+                    }
+                }
+            });
+        });
+      }else
+	  if(obj.event === 'menu'){
+        var tr = $(obj.tr);
+  
+        layer.open({
+          type: 2
+          ,title: '编辑'
+          ,content: '?module=sysrole&act=main&do=addmenu&id='+id
+          ,maxmin: true
+          ,area: ['100%', '100%']
+          ,btn: ['确定', '取消']
+          ,resize: false
+          ,yes: function(index, layero){
+            var submit = layero.find('iframe').contents().find("#layuiadmin-app-form-submit");
+			submit.click();insTb.refresh();
+          }
+          ,success: function(layero, index){
+          }
+  
+        });
+      }
+	  else
+	  if(obj.event === 'sys'){
+        var tr = $(obj.tr);
+  
+        layer.open({
+          type: 2
+          ,title: '系统'
+          ,content: '?module=sysrole&act=main&do=addsys&id='+id
+          ,maxmin: true
+          ,area: ['100%', '100%']
+          ,btn: ['确定', '取消']
+          ,resize: false
+          ,yes: function(index, layero){
+            var submit = layero.find('iframe').contents().find("#layuiadmin-app-form-submit");
+			submit.click();insTb.refresh();
+          }
+          ,success: function(layero, index){
+          }
+  
+        });
+      }
+	  else
+	  if(obj.event === 'module'){
+        var tr = $(obj.tr);
+  
+        layer.open({
+          type: 2
+          ,title: '编辑'
+          ,content: '?module=sysrole&act=main&do=addmodule&id='+id
+          ,maxmin: true
+          ,area: ['100%', '100%']
+          ,btn: ['确定', '取消']
+          ,resize: false
+          ,yes: function(index, layero){
+            var submit = layero.find('iframe').contents().find("#layuiadmin-app-form-submit");
+			submit.click();insTb.refresh();
+          }
+          ,success: function(layero, index){
+          }
+  
+        });
+      }
+	  else if (obj.event === 'edit') { // 修改
+			layer.open({
+			  type: 2
+			  ,title: '编辑'
+			  ,content: '?module=sysrole&act=main&do=add&id='+id
+			  ,area: ['100%', '100%']
+			  ,btn: ['确定', '取消']
+			  ,resize: false
+			  ,yes: function(index, layero){
+				var submit = layero.find('iframe').contents().find("#layuiadmin-app-form-submit");
+				submit.click();
+			  }
+			  ,success: function(layero, index){
+				  
+			  }
+	  
+			});
+		}
+	 });
+
+	//新增
+	$('#inputBtnAdd').click(function(){
+		layer.open({
+		  type: 2
+		  ,title: '添加'
+		  ,content: '?module=sysrole&act=main&do=add'
+		  ,maxmin: true
+		  ,area: ['100%', '100%']
+		  ,btn: ['确定', '取消']
+		  ,yes: function(index, layero){
+			//点击确认触发 iframe 内容中的按钮提交
+			var submit = layero.find('iframe').contents().find("#layuiadmin-app-form-submit");
+			submit.click();
+		  }
+		});
+	});
+  });
+  </script>
+</body>
+</html>
+
+<? end ?>

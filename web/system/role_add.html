@@ -1,0 +1,91 @@
+<? define "sysrole/add.htm" ?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+</head>
+
+<body>
+<div class="layui-form model-form" lay-filter="layuiadmin-app-form-list" id="layuiadmin-app-form-list" style="padding: 20px 30px 0 0;">
+    <input name="id" type="hidden" value="<?.info.ID?>"/>
+    <div class="layui-form-item">
+        <label class="layui-form-label">标识</label>
+        <div class="layui-input-inline">
+            <input type="text" name="name" value="<? .info.Name ?>" lay-verify="required" placeholder="请输入唯一标识" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">名称</label>
+        <div class="layui-input-inline">
+            <input type="text" name="rname" value="<? .info.Rname ?>" lay-verify="required" placeholder="请输入名称" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">系统组</label>
+        <div class="layui-input-inline">
+            <input type="text" name="sysgroup" value="<? .info.Sysgroup ?>"  autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-inline">
+            <input type="text" name="remarks" value="<? .info.Remarks ?>"  autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="layuiadmin-app-form-submit" id="layuiadmin-app-form-submit" value="确认添加">
+        <input type="button" lay-submit lay-filter="layuiadmin-app-form-edit" id="layuiadmin-app-form-edit" value="确认编辑">
+    </div>
+</div>
+
+<script src="/static/layui/layui.js"></script>
+<script>
+    layui.use(function () {
+        var $ = layui.$;
+        var layer = layui.layer;
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(layuiadmin-app-form-submit)', function(data){
+            var field = data.field;
+            var index = parent.layer.getFrameIndex(window.name);
+            var t = layer.load(1);
+
+            field.id = Number(field.id) || 0;
+            var apiUrl = '?module=sysrole&act=main&do=create'; // 默认是新增
+            if (field.id > 0) {
+                apiUrl = '?module=sysrole&act=main&do=update';
+            }
+
+            // JSON 提交方式
+            $.ajax({
+                url: apiUrl,
+                data: JSON.stringify(field), // 转 JSON 字符串
+                type: 'post',
+                contentType: 'application/json; charset=utf-8', // 关键：声明 JSON
+                dataType: 'json',
+                success: function (res) {
+                    if (res.code === 0) {
+                        parent.layui.table.reload("LAY-app-role-list");
+                        parent.layer.close(index);
+                    }else {
+                        layer.msg(res.msg || '操作失败', {icon: 5});
+                    }
+                    layer.close(t);
+                },
+                error: function () {
+                    layer.msg('请求异常', {icon: 5});
+                    layer.close(t);
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
+<? end ?>

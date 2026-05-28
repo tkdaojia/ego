@@ -1,0 +1,272 @@
+<? define "open/login.htm" ?>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
+    <title><?.webname?></title>
+    <style type="text/css">
+        /* 全局舒适初始化 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            /* 极具科技感的深邃微渐变背景 */
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* 环绕背景的科技流光装饰球 */
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(0, 123, 255, 0.2), rgba(0, 229, 255, 0.05));
+            filter: blur(60px);
+            z-index: 1;
+        }
+        .circle-1 { width: 400px; height: 400px; top: -10%; left: -10%; }
+        .circle-2 { width: 500px; height: 500px; bottom: -15%; right: -5%; }
+
+        /* 登录卡片容器（毛玻璃/微光质感） */
+        .login-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 440px;
+            padding: 45px 40px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        /* 标题设计 */
+        .login-header {
+            margin-bottom: 35px;
+        }
+        .login-header h1 {
+            color: #ffffff;
+            font-size: 26px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .login-header p {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 13px;
+            letter-spacing: 1px;
+        }
+
+        /* 表单输入组 */
+        .form-group {
+            position: relative;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            padding-left: 2px;
+        }
+        .form-control {
+            width: 100%;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 0 16px;
+            color: #ffffff;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        /* Focus 聚焦状态呼吸灯光效 */
+        .form-control:focus {
+            border-color: #00e5ff;
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.3);
+        }
+
+        /* 校验不通过状态 */
+        .form-control.is-invalid {
+            border-color: #ff4d4d !important;
+            box-shadow: 0 0 10px rgba(255, 77, 77, 0.2) !important;
+        }
+        .invalid-feedback {
+            display: none;
+            color: #ff4d4d;
+            font-size: 12px;
+            margin-top: 5px;
+            padding-left: 2px;
+        }
+        .form-control.is-invalid + .invalid-feedback {
+            display: block;
+        }
+
+        /* 后端错误消息提示区 */
+        #msg {
+            color: #ff4d4d;
+            font-size: 13px;
+            text-align: center;
+            min-height: 20px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        /* 登录按钮美化 */
+        .btn-submit {
+            width: 100%;
+            height: 48px;
+            background: linear-gradient(90deg, #007bff, #00e5ff);
+            border: none;
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3);
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 229, 255, 0.5);
+            background: linear-gradient(90deg, #0069d9, #00c8e6);
+        }
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-circle circle-1"></div>
+<div class="bg-circle circle-2"></div>
+
+<div class="login-container">
+    <div class="login-header">
+        <h1><?.webname?></h1>
+        <p>欢迎回来，请登录您的账户</p>
+    </div>
+
+    <form id="login-form" novalidate>
+        <div class="form-group">
+            <label for="username">账号</label>
+            <input id="username" type="text" class="form-control" name="username" autocomplete="off" placeholder="请输入您的账号" required autofocus>
+            <div class="invalid-feedback">请输入你的账号</div>
+        </div>
+
+        <div class="form-group">
+            <label for="password">密码</label>
+            <input id="password" type="password" class="form-control" name="password" placeholder="请输入密码" required>
+            <div class="invalid-feedback">请输入密码</div>
+        </div>
+
+        <div id="msg"></div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+            <button type="button" onclick="login()" class="btn-submit">登录</button>
+        </div>
+    </form>
+</div>
+
+<script src="/static/assets/js/jquery.min.js"></script>
+<script src="/static/assets/js/jq.cookie.min.js"></script>
+
+<script>
+    function login() {
+        window.localStorage.removeItem("token");
+        var username = $('[name="username"]').val();
+        var password = $('[name="password"]').val();
+
+        if (username == '') {
+            $('[name="username"]').removeClass("is-valid").addClass("is-invalid");
+            return;
+        } else {
+            $('[name="username"]').removeClass("is-invalid").addClass("is-valid");
+        }
+
+        if (password == '') {
+            $('[name="password"]').removeClass("is-valid").addClass("is-invalid");
+            return;
+        } else {
+            $('[name="password"]').removeClass("is-invalid").addClass("is-valid");
+        }
+
+        // ✨ 组装 JSON 提交的数据对象
+        var postData = {
+            "username": username,
+            "password": password
+        };
+
+        jQuery.ajax({
+            type: 'POST',
+            url: '?module=login',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(postData),
+            dataType: 'json',
+            success: function (data) {
+                if (data.code == 200) {
+                    $.cookie('<?.cookiename?>', data.data, { path: '/' });
+                    var timestamp = (new Date()).valueOf();
+                    window.top.location.href = "/admin/?module=index&act=main&do=first&t=" + timestamp;
+                } else {
+                    $('[name="password"]').val('');
+                    $("#msg").show("slow").html(data.msg);
+                }
+            },
+            error: function (html) {
+                if (typeof console != 'undefined') {
+                    console.log("服务器忙，提交数据失败，代码:" + html.status + "，请联系管理员！");
+                }
+                alert("服务器忙，提交数据失败，请联系管理员！");
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $("#username").change(function(){
+            var username = $('[name="username"]').val();
+            if (username == '') {
+                $('[name="username"]').removeClass("is-valid").addClass("is-invalid");
+            } else {
+                $('[name="username"]').removeClass("is-invalid").addClass("is-valid");
+            }
+            $("#msg").hide();
+        });
+
+        $("#password").change(function(){
+            var password = $('[name="password"]').val();
+            if (password == '') {
+                $('[name="password"]').removeClass("is-valid").addClass("is-invalid");
+            } else {
+                $('[name="password"]').removeClass("is-invalid").addClass("is-valid");
+            }
+            $("#msg").hide();
+        });
+
+        $("body").keydown(function (event) {
+            if (event.which == 13) {
+                login();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
+<? end ?>

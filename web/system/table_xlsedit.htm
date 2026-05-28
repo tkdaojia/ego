@@ -1,0 +1,181 @@
+<? define "systable/xlsedit.htm" ?>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+</head>
+<body>
+
+<div class="layui-form layui-form-pane" lay-filter="layuiadmin-app-form-list" id="layuiadmin-app-form-list" style="padding: 20px 30px 10px 20px;">
+	<input name="id" type="hidden" value="<?.info.id?>"/>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"><?.info.cname?></label>
+		<div class="layui-input-block">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">绑定列</label>
+		<div class="layui-input-block">
+			<select name="xlsc" lay-verify="required">
+				<option value="">请选择</option>
+				<option value="A" <?if eq .info.xlsc "A" ?> selected <? end ?>>A</option>
+				<option value="B" <?if eq .info.xlsc "B" ?> selected <? end ?>>B</option>
+				<option value="C" <?if eq .info.xlsc "C" ?> selected <? end ?>>C</option>
+				<option value="D" <?if eq .info.xlsc "D" ?> selected <? end ?>>D</option>
+				<option value="E" <?if eq .info.xlsc "E" ?> selected <? end ?>>E</option>
+				<option value="F" <?if eq .info.xlsc "F" ?> selected <? end ?>>F</option>
+				<option value="G" <?if eq .info.xlsc "G" ?> selected <? end ?>>G</option>
+				<option value="H" <?if eq .info.xlsc "H" ?> selected <? end ?>>H</option>
+				<option value="I" <?if eq .info.xlsc "I" ?> selected <? end ?>>I</option>
+				<option value="J" <?if eq .info.xlsc "J" ?> selected <? end ?>>J</option>
+				<option value="K" <?if eq .info.xlsc "K" ?> selected <? end ?>>K</option>
+				<option value="L" <?if eq .info.xlsc "L" ?> selected <? end ?>>L</option>
+				<option value="M" <?if eq .info.xlsc "M" ?> selected <? end ?>>M</option>
+				<option value="N" <?if eq .info.xlsc "N" ?> selected <? end ?>>N</option>
+				<option value="O" <?if eq .info.xlsc "O" ?> selected <? end ?>>O</option>
+				<option value="P" <?if eq .info.xlsc "P" ?> selected <? end ?>>P</option>
+				<option value="Q" <?if eq .info.xlsc "Q" ?> selected <? end ?>>Q</option>
+				<option value="R" <?if eq .info.xlsc "R" ?> selected <? end ?>>R</option>
+				<option value="S" <?if eq .info.xlsc "S" ?> selected <? end ?>>S</option>
+				<option value="T" <?if eq .info.xlsc "T" ?> selected <? end ?>>T</option>
+				<option value="U" <?if eq .info.xlsc "U" ?> selected <? end ?>>U</option>
+				<option value="V" <?if eq .info.xlsc "V" ?> selected <? end ?>>V</option>
+				<option value="W" <?if eq .info.xlsc "W" ?> selected <? end ?>>W</option>
+				<option value="X" <?if eq .info.xlsc "X" ?> selected <? end ?>>X</option>
+				<option value="Y" <?if eq .info.xlsc "Y" ?> selected <? end ?>>Y</option>
+				<option value="Z" <?if eq .info.xlsc "Z" ?> selected <? end ?>>Z</option>
+				<option value="AA" <?if eq .info.xlsc "AA" ?> selected <? end ?>>AA</option>
+				<option value="AB" <?if eq .info.xlsc "AB" ?> selected <? end ?>>AB</option>
+				<option value="AC" <?if eq .info.xlsc "AC" ?> selected <? end ?>>AC</option>
+				<option value="AD" <?if eq .info.xlsc "AD" ?> selected <? end ?>>AD</option>
+				<option value="AE" <?if eq .info.xlsc "AE" ?> selected <? end ?>>AE</option>
+				<option value="AF" <?if eq .info.xlsc "AF" ?> selected <? end ?>>AF</option>
+				<option value="AG" <?if eq .info.xlsc "AG" ?> selected <? end ?>>AG</option>
+				<option value="AH" <?if eq .info.xlsc "AH" ?> selected <? end ?>>AH</option>
+				<option value="AI" <?if eq .info.xlsc "AI" ?> selected <? end ?>>AI</option>
+				<option value="AJ" <?if eq .info.xlsc "AJ" ?> selected <? end ?>>AJ</option>
+				<option value="AK" <?if eq .info.xlsc "AK" ?> selected <? end ?>>AK</option>
+				<option value="AL" <?if eq .info.xlsc "AL" ?> selected <? end ?>>AL</option>
+				<option value="AM" <?if eq .info.xlsc "AM" ?> selected <? end ?>>AM</option>
+				<option value="AN" <?if eq .info.xlsc "AN" ?> selected <? end ?>>AN</option>
+				<option value="AO" <?if eq .info.xlsc "AO" ?> selected <? end ?>>AO</option>
+				<option value="AP" <?if eq .info.xlsc "AP" ?> selected <? end ?>>AP</option>
+				<option value="AQ" <?if eq .info.xlsc "AQ" ?> selected <? end ?>>AQ</option>
+				<option value="AR" <?if eq .info.xlsc "AR" ?> selected <? end ?>>AR</option>
+				<option value="AS" <?if eq .info.xlsc "AS" ?> selected <? end ?>>AS</option>
+				<option value="AT" <?if eq .info.xlsc "AT" ?> selected <? end ?>>AT</option>
+				<option value="AU" <?if eq .info.xlsc "AU" ?> selected <? end ?>>AU</option>
+				<option value="AV" <?if eq .info.xlsc "AV" ?> selected <? end ?>>AV</option>
+				<option value="AW" <?if eq .info.xlsc "AW" ?> selected <? end ?>>AW</option>
+				<option value="AX" <?if eq .info.xlsc "AX" ?> selected <? end ?>>AX</option>
+				<option value="AY" <?if eq .info.xlsc "AY" ?> selected <? end ?>>AY</option>
+				<option value="AZ" <?if eq .info.xlsc "AZ" ?> selected <? end ?>>AZ</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">关联表</label>
+		<div class="layui-input-block">
+			<select name="fat_tab_id" id="fat_tab_id" lay-filter="fat_tab_id" lay-search >
+				<option value="">选择关联表</option>
+				<? range $i,$v :=.tabArr ?>
+				<option value="<? $i ?>" <?if eq $i $.info.link_tab_id ?> selected  <? end ?> ><? $v ?></option>
+				<?end?>
+			</select>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">判断字段</label>
+		<div class="layui-input-block">
+			<select name="fat_key_field_id" id="fat_key_field_id" lay-search >
+				<option value="<? .info.check_field_id ?>" ><? .info.check_field_name ?></option>
+			</select>
+		</div>
+	</div>
+
+	<div class="layui-form-item layui-hide">
+		<input type="button" lay-submit lay-filter="layuiadmin-app-form-submit" id="layuiadmin-app-form-submit" value="确认添加">
+		<input type="button" lay-submit lay-filter="layuiadmin-app-form-edit" id="layuiadmin-app-form-edit" value="确认编辑">
+	</div>
+</div>
+
+<script src="/static/layui/layui.js"></script>
+<script>
+	layui.use(['layer', 'form', 'table'], function () {
+		var $ = layui.$;
+		var form = layui.form;
+		var layer = layui.layer;
+
+		// 联动选择关联表时加载字段列表
+		form.on('select(fat_tab_id)', function(data){
+			var nos = $("#fat_tab_id").val();
+			if(!nos) {
+				$("#fat_key_field_id").html('<option value="">选择关联表</option>');
+				form.render('select');
+				return;
+			}
+			$.ajax({
+				url: '?module=systable&act=field&do=select&tab_id=' + nos,
+				type: 'get',
+				dataType: 'json',
+				success: function (res) {
+					var data = res.data;
+					var str = '<option value="">请选择判断字段</option>';
+					for(var x in data){
+						str += '<option value = "' + data[x].id + '">' + data[x].cname + '['+ data[x].fname + ']' + '</option>';
+					}
+					$("#fat_key_field_id").html(str);
+					form.render('select');
+				}
+			});
+		});
+
+		// 监听提交
+		form.on("submit(layuiadmin-app-form-submit)", function(data){
+			var field = data.field; // 获取提交的字段
+			var index = parent.layer.getFrameIndex(window.name); // 先得到当前iframe层的索引
+
+			var numberFields = ['id', 'fat_tab_id', 'fat_key_field_id'];
+			numberFields.forEach(function (key) {
+				field[key] = (field[key] !== undefined && field[key] !== "") ? Number(field[key]) : 0;
+			});
+
+			var t = layer.load(1);
+
+			$.ajax({
+				url: "?module=systable&act=tab&do=xlsedit",
+				data: JSON.stringify(field),       // 序列化为 JSON 字符串
+				type: "post",
+				contentType: "application/json",  // 声明请求头格式为 JSON
+				dataType: "json",
+				success: function (res) {
+					if (res.success || res.code === 0) {
+						parent.layui.table.reload("LAY-table-list");
+						parent.layer.close(index);
+					} else {
+						if (res.msg) {
+							layer.msg(res.msg, {icon: 5});
+						} else layer.msg("操作失败", {icon: 5});
+					}
+					layer.close(t);
+				},
+				error: function (xhr) {
+					layer.close(t);
+					layer.msg("网络通讯异常", {icon: 5});
+				}
+			});
+		});
+	});
+</script>
+</body>
+</html>
+<? end ?>

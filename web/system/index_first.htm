@@ -1,0 +1,187 @@
+<? define "index/first.htm" ?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <title><?.webname?></title>
+    <style type="text/css">
+        /* 全局初始化与现代化渐变背景 */
+        *{
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: linear-gradient(135deg, #1f4068 0%, #162447 50%, #1b1a17 100%);
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 放弃固定 1000px，采用弹性响应式容器 */
+        .main {
+            width: 100%;
+            max-width: 1200px;
+            padding: 40px 20px;
+            margin: 0 auto;
+        }
+
+        /* 标题区域美化 */
+        .title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .title>img {
+            width: 42px;
+            height: 42px;
+            vertical-align: middle;
+            margin-right: 12px;
+            filter: drop-shadow(0px 2px 8px rgba(255,255,255,0.2));
+        }
+        .title>span {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 4px;
+            vertical-align: middle;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .title>.line {
+            margin: 15px auto 0 auto;
+            width: 120px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            border: none;
+        }
+
+        /* 系统列表容器 */
+        .sys_list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px; /* 现代布局使用 gap 替代 margin */
+            width: 100%;
+        }
+
+        /* 移除 a 标签默认下划线 */
+        .sys_list>.item {
+            text-decoration: none;
+        }
+
+        /* 卡片主体：融入微光与高级阴影 */
+        .sys_list>.item {
+            position: relative;
+            background-color: rgba(255, 255, 255, 0.95);
+            width: 160px;
+            height: 250px;
+            text-align: center;
+            padding: 25px 15px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            cursor: pointer;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 悬停动效：上浮、精细长阴影、整体提亮 */
+        .sys_list>.item:hover {
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transform: translateY(-10px);
+            background-color: #ffffff;
+        }
+
+        /* 图标外圈圆 */
+        .sys_list>.item>.icon-round {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+            transition: transform 0.4s ease;
+        }
+
+        /* 悬停时图标放大 */
+        .sys_list>.item:hover .icon-round {
+            transform: scale(1.08);
+        }
+
+        .sys_list>.item>.icon-round>img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+        }
+
+        /* 标签文字区域 */
+        .sys_list>.item .label {
+            width: 100%;
+            margin-top: auto; /* 推至卡片底部 */
+            position: relative;
+        }
+
+        /* 现代化微细分隔线 */
+        .sys_list>.item .label:before {
+            content: '';
+            display: block;
+            height: 1px;
+            width: 80%;
+            background: linear-gradient(90deg, transparent, rgba(0,0,0,0.08), transparent);
+            margin: 0 auto 15px auto;
+        }
+
+        .sys_list>.item .label>.text {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            color: #333333;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+        }
+
+        /* 悬停时文字颜色加深或微变 */
+        .sys_list>.item:hover .label>.text {
+            color: #000000;
+        }
+
+        /* 重新调配的 5 种现代感渐变主题色 */
+        .bg1 .icon-round { background: linear-gradient(135deg, #2575fc 0%, #6a11cb 100%); }
+        .bg2 .icon-round { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .bg3 .icon-round { background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); }
+        .bg4 .icon-round { background: linear-gradient(135deg, #7303c0 0%, #ec38bc 100%); }
+        .bg5 .icon-round { background: linear-gradient(135deg, #f857a6 0%, #ff5858 100%); }
+
+    </style>
+</head>
+<body>
+<div class="main">
+    <div class="title">
+        <img src="../../static/assets/images/logo.png" alt="Logo">
+        <span><?.webname?></span>
+        <div class="line"></div>
+    </div>
+
+    <div class="sys_list">
+        <? range .sysgroup ?>
+        <a class="item bg<? .ID ?>" href="?module=index&act=main&do=choose&system=<? .ID ?>&t=<? $.t ?>">
+            <div class="icon-round">
+                <img src="../../static/syslogo/<?.Icon?>" alt="<? .Gname ?>">
+            </div>
+            <div class="label">
+                <span class="text"><? .Gname ?></span>
+            </div>
+        </a>
+        <? end ?>
+    </div>
+</div>
+</body>
+</html>
+<? end ?>

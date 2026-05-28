@@ -1,0 +1,1 @@
+[CBC_LOG]2026/05/28 - 15:36:08.722	[31merror[0m	/Users/wenxi/程序/egosrc/src/utils/auditLog/auditLog.go:80	写入审计日志失败	{"error": "Error 1364: Field 'id' doesn't have a default value"}

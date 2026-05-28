@@ -1,0 +1,132 @@
+<? define "syslog/syslogDetail.htm" ?>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>日志详情</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+  <style>
+    .detail-item { margin-bottom: 15px; }
+    .detail-label { font-weight: bold; color: #666; margin-bottom: 5px; }
+    .detail-value { background: #f8f8f8; padding: 10px; border-radius: 4px; border: 1px solid #eee; min-height: 20px; word-break: break-all; }
+    pre { margin: 0; white-space: pre-wrap; font-family: Courier New, Courier, monospace; font-size: 13px; color: #333; }
+    .json-block { background: #282c34; color: #abb2bf; border: none; padding: 12px; }
+    .json-block pre { color: #abb2bf; }
+  </style>
+</head>
+<body>
+
+<div class="layui-fluid" style="padding: 20px;">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-xs6 detail-item">
+      <div class="detail-label">操作人</div>
+      <div class="detail-value"><?.info.Nickname?> (<?.info.Username?>)</div>
+    </div>
+    <div class="layui-col-xs6 detail-item">
+      <div class="detail-label">操作IP</div>
+      <div class="detail-value"><?.info.Ip?></div>
+    </div>
+
+    <div class="layui-col-xs4 detail-item">
+      <div class="detail-label">模块/动作/方法</div>
+      <div class="detail-value"><?.info.Module?> / <?.info.Action?> / <?.info.Do?></div>
+    </div>
+    <div class="layui-col-xs4 detail-item">
+      <div class="detail-label">请求方式 & 耗时</div>
+      <div class="detail-value">
+        <span class="layui-badge layui-bg-blue"><?.info.Method?></span>
+        <span class="layui-badge layui-bg-badge" style="background-color: #5fb878;"><?.info.Latency?> ms</span>
+      </div>
+    </div>
+    <div class="layui-col-xs4 detail-item">
+      <div class="detail-label">操作状态</div>
+      <div class="detail-value">
+        <?if eq .info.Status 1 ?>
+        <span class="layui-badge layui-bg-green">成功</span>
+        <?else?>
+        <span class="layui-badge layui-bg-red">失败</span>
+        <?end?>
+      </div>
+    </div>
+
+    <div class="layui-col-xs12 detail-item">
+      <div class="detail-label">操作描述</div>
+      <div class="detail-value" style="background-color: #fff9ec; border-color: #ffb800;"><?.info.Description?></div>
+    </div>
+
+    <div class="layui-col-xs12 detail-item">
+      <div class="detail-label">请求 URL</div>
+      <div class="detail-value"><pre><?.info.Url?></pre></div>
+    </div>
+
+    <div class="layui-col-xs12 detail-item">
+      <div class="detail-label">客户端环境 (UserAgent)</div>
+      <div class="detail-value" style="background-color: #f4f6f8;"><pre><?.info.UserAgent?></pre></div>
+    </div>
+
+    <? if ne .info.Status 1 ?>
+    <div class="layui-col-xs12 detail-item">
+      <div class="detail-label" style="color: red;">错误堆栈/提示信息 (ErrorMsg)</div>
+      <div class="detail-value" style="background: #fff5f5; border-color: #ffb8b8; color: #ff5722;">
+        <pre><?.info.ErrorMsg?></pre>
+      </div>
+    </div>
+    <? end ?>
+  </div>
+
+  <div class="layui-collapse" lay-accordion style="margin-top: 15px;">
+    <div class="layui-colla-item">
+      <div class="layui-colla-title">🔌 请求参数 (Param)</div>
+      <div class="layui-colla-content layui-show json-block">
+        <pre id="json-param"><?.info.Param?></pre>
+      </div>
+    </div>
+    <div class="layui-colla-item">
+      <div class="layui-colla-title">⏮️ 变动前旧数据 (DataOld)</div>
+      <div class="layui-colla-content json-block">
+        <pre id="json-old"><?.info.DataOld?></pre>
+      </div>
+    </div>
+    <div class="layui-colla-item">
+      <div class="layui-colla-title">⏭️ 变动后新数据 (DataNew)</div>
+      <div class="layui-colla-content json-block">
+        <pre id="json-new"><?.info.DataNew?></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/layui/layui.js"></script>
+<script>
+  layui.use(['element'], function(){
+    var $ = layui.$;
+
+    // 自动将字符串 JSON 格式化为带缩进、易读的艺术结构
+    function prettyJson(elementId) {
+      var element = $("#" + elementId);
+      var rawStr = element.text().trim();
+      if (rawStr) {
+        try {
+          // 解析并重新序列化，4个空格缩进
+          var jsonObj = JSON.parse(rawStr);
+          element.text(JSON.stringify(jsonObj, null, 4));
+        } catch (e) {
+          // 如果不是标准 JSON 字符串，保持原样文本展示
+        }
+      } else {
+        element.text("（暂无数据）");
+      }
+    }
+
+    // 渲染执行美化
+    prettyJson('json-param');
+    prettyJson('json-old');
+    prettyJson('json-new');
+  });
+</script>
+</body>
+</html>
+<? end ?>

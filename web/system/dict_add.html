@@ -1,0 +1,101 @@
+<? define "sysdict/add.htm" ?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+</head>
+<body>
+
+<div class="layui-form model-form" lay-filter="layuiadmin-app-form-list" id="layuiadmin-app-form-list" style="padding: 20px 30px 0 0;">
+    <input name="id" type="hidden" value="<? .info.ID ?>"/>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">名称</label>
+        <div class="layui-input-inline">
+            <input type="text" name="pname" value="<? .info.Pname ?>" lay-verify="required" placeholder="请输入名称" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">系统组</label>
+        <div class="layui-input-inline">
+            <select lay-search name="ptype" lay-filter="ptype" lay-verify="required" >
+                <option value="">请选择</option>
+                <? range $k, $v  := .ptype ?>
+                <option value="<? $k ?>" <?if eq $k $.info.Ptype ?> selected  <?end?>><? $v ?></option>
+                <? end ?>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-inline">
+            <input type="text" name="remarks" value="<? .info.Remarks ?>"  autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="layuiadmin-app-form-submit" id="layuiadmin-app-form-submit" value="确认添加">
+        <input type="button" lay-submit lay-filter="layuiadmin-app-form-edit" id="layuiadmin-app-form-edit" value="确认编辑">
+    </div>
+</div>
+
+<script src="/static/layui/layui.js"></script>
+<script>
+    layui.use(function () {
+        var $ = layui.$;
+        var layer = layui.layer;
+        var form = layui.form;
+
+
+        // 监听提交：改造为严格的 JSON 提交
+        form.on('submit(layuiadmin-app-form-submit)', function(data){
+            var field = data.field; // 获取提交的原始表单字段
+            var index = parent.layer.getFrameIndex(window.name);
+
+            field.id = (field.id && !isNaN(field.id)) ? Number(field.id) : 0;
+            field.ptype = (field.ptype && !isNaN(field.ptype)) ? Number(field.ptype) : 0;
+
+            var apiUrl = '?module=sysdict&act=main&do=create'; // 默认是新增
+            if (field.id > 0) {
+                apiUrl = '?module=sysdict&act=main&do=update';
+            }
+
+            var t = layer.load(1);
+
+            $.ajax({
+                url: apiUrl,
+                data: JSON.stringify(field),                  // 1. 序列化为标准 JSON 字符串
+                type: 'post',
+                contentType: 'application/json; charset=utf-8', // 2. 必须显式声明请求头为 application/json
+                dataType: 'json',
+                success: function (res) {
+                    console.log(JSON.stringify(res));
+                    if (res.code === 0) {
+                        // 联动成功处理逻辑
+                        parent.layui.table.reload("LAY-app-goods-apply-list");
+                        parent.layer.close(index);
+                    } else {
+                        if (res.msg) {
+                            layer.msg(res.msg, {icon: 5});
+                        } else {
+                            layer.msg('操作失败', {icon: 5});
+                        }
+                    }
+                    layer.close(t);
+                },
+                error: function (xhr) {
+                    layer.close(t);
+                    layer.msg('网络开小差了，请稍后再试', {icon: 5});
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
+<? end ?>

@@ -1,0 +1,132 @@
+<? define "sysmenu/list.htm" ?>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+</head>
+<body>
+
+<div class="layui-fluid" style="padding: 20px 15px 15px 15px;">
+  <div class="layui-card">
+    <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+      <div class="layui-form-item">
+        <div class="layui-inline">
+          <button class="layui-btn layui-btn-normal layui-btn-radius layui-btn-sm  menuBtnAdd" data-type="add" >
+            <i class="layui-icon layui-icon-addition layuiadmin-button-btn"></i>新增
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="layui-card-body">
+      <table class="layui-hide" id="LAY-app-menu-list" lay-filter="LAY-app-menu-list"></table>
+      <script type="text/html" id="tableBarMenus">
+        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+      </script>
+    </div>
+  </div>
+</div>
+
+<script type="text/html" id="stateTpl">
+  {{# if (d.status == 1) { }}
+  <font color="green">正常</font>
+  {{# } else { }}
+  <font color="red">停用</font>
+  {{# } }}
+</script>
+
+<script type="text/javascript" src="/static/layui/layui.js"></script>
+<script>
+  layui.use(['treeTable', 'layer', 'util'], function(){
+    var $ = layui.$;
+    var treeTable = layui.treeTable;
+    var layer = layui.layer;
+
+    // 新增
+    $('.menuBtnAdd').click(function(){
+      layer.open({
+        type: 2,
+        title: '添加',
+        content: '?module=sysmenu&act=main&do=add',
+        maxmin: true,
+        area: ['420px', '600px'],
+        btn: ['确定', '取消'],
+        yes: function(index, layero){
+          var submit = layero.find('iframe').contents().find("#layuiadmin-app-form-submit");
+          submit.click();
+          treeTable.reload("LAY-app-menu-list");
+        }
+      });
+    });
+
+    treeTable.render({
+      elem: '#LAY-app-menu-list',
+      url: '?module=sysmenu&act=main&do=getdata',
+      height: '630px',
+      tree: {
+        view: {
+          expandAllDefault: true
+        },
+      },
+      cols: [[
+        {type: 'numbers', title: '序号', width:80},
+        {field: 'name', title: '名称'},
+        {field: 'mlink', title: '链接', width:350},
+        {field: 'icon', title: '图标', align: 'center', templet:function(d){
+            return '<i class="layui-icon '+d.icon+'"></i>';
+          }},
+        {field: 'status', title: '状态', templet: '#stateTpl'},
+        {field: 'mtype_name', title: '分组'},
+        {title: '操作', width:150, align: 'center', fixed: 'right', toolbar: '#tableBarMenus'}
+      ]]
+    });
+
+    // 工具条事件
+    treeTable.on('tool(LAY-app-menu-list)', function(obj){
+      var data = obj.data;
+      var id = data.id;
+
+      if(obj.event === 'del'){
+        layer.confirm('确定删除？', function(index){
+          $.ajax({
+            url: '?module=sysmenu&act=main&do=del&id='+id,
+            type: 'get',
+            dataType: 'json',
+            success: function (res) {
+              if (res.success) {
+                obj.del();
+                layer.msg('删除完成',{icon:1});
+              } else {
+                layer.msg(res.msg || '操作失败', {icon: 5});
+              }
+            }
+          });
+          layer.close(index);
+        });
+      }
+      else if(obj.event === 'edit'){
+        layer.open({
+          type: 2,
+          title: '编辑',
+          content: '?module=sysmenu&act=main&do=add&id='+id,
+          area: ['420px', '600px'],
+          btn: ['确定', '取消'],
+          resize: false,
+          yes: function(index, layero){
+            var submit = layero.find('iframe').contents().find("#layuiadmin-app-form-submit");
+            submit.click();
+            treeTable.reload("LAY-app-menu-list");
+          }
+        });
+      }
+    });
+  });
+</script>
+</body>
+</html>
+<? end ?>

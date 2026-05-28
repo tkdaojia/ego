@@ -1,0 +1,136 @@
+<? define "sysmenu/add.htm" ?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+</head>
+<body>
+
+<div class="layui-form model-form" lay-filter="layuiadmin-app-form-list" id="layuiadmin-app-form-list" style="padding: 20px 30px 0 0;">
+    <input name="id" type="hidden" value="<? .info.ID ?>"/>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">父类</label>
+        <div class="layui-input-inline">
+            <select name="pid" lay-search>
+                <option value="0">请选择</option> <? range .cate ?>
+                <option value="<? .ID ?>" <? if eq .ID $.pid ?> selected <? end ?> ><? .Mname ?></option>
+                <? end ?>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">名称</label>
+        <div class="layui-input-inline">
+            <input type="text" name="mname" value="<? .info.Mname ?>" lay-verify="required" placeholder="请输入名称" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">链接</label>
+        <div class="layui-input-inline">
+            <input type="text" name="mlink" value="<? .info.Mlink ?>" lay-verify="required" placeholder="请输入链接" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">图标</label>
+        <div class="layui-input-inline">
+            <input type="text" name="icon" value="<? .info.Icon ?>" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">排序</label>
+        <div class="layui-input-inline">
+            <input type="number" name="ordnum" value="<? .info.Ordnum ?>" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-inline">
+            <input type="number" name="status" value="<? .info.Status ?>" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">系统组</label>
+        <div class="layui-input-inline">
+            <select name="typeid" lay-search>
+                <option value="0">请选择</option>
+                <? range $k, $v := .menuType ?>
+                <option value="<? $k ?>" <? if eq $k $.mid ?> selected <? end ?> ><? $v ?></option>
+                <? end ?>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="layuiadmin-app-form-submit" id="layuiadmin-app-form-submit" value="确认添加">
+        <input type="button" lay-submit lay-filter="layuiadmin-app-form-edit" id="layuiadmin-app-form-edit" value="确认编辑">
+    </div>
+</div>
+
+<script src="/static/layui/layui.js"></script>
+<script>
+    layui.use(function () {
+        var $ = layui.$;
+        var layer = layui.layer;
+        var form = layui.form;
+
+        // 提取统一的提交逻辑
+        function submitForm(field) {
+            var index = parent.layer.getFrameIndex(window.name);
+            var loadIndex = layer.load(1);
+
+            field.id = (field.id && !isNaN(field.id)) ? Number(field.id) : 0;
+            var apiUrl = '?module=sysmenu&act=main&do=create'; // 默认是新增
+            if (field.id > 0) {
+                apiUrl = '?module=sysmenu&act=main&do=update';
+            }
+
+            $.ajax({
+                url: apiUrl,
+                type: 'post',
+                contentType: 'application/json; charset=utf-8', // 【关键点二】指定为 JSON 格式
+                data: JSON.stringify(field),                    // 【关键点三】序列化对象
+                dataType: 'json',
+                success: function (res) {
+                    if (res.code === 0) {
+                        parent.layer.close(index);
+                        parent.treeTable.reload("LAY-app-menu-list");
+                    } else {
+                        layer.msg(res.msg || '操作失败', { icon: 5 });
+                    }
+                    layer.close(loadIndex);
+                },
+                error: function () {
+                    layer.msg('请求异常', { icon: 5 });
+                    layer.close(loadIndex);
+                }
+            });
+        }
+
+        // 监听确认添加按钮
+        form.on('submit(layuiadmin-app-form-submit)', function (data) {
+            submitForm(data.field);
+            return false; // 阻止表单默认跳转
+        });
+
+        // 监听确认编辑按钮
+        form.on('submit(layuiadmin-app-form-edit)', function (data) {
+            submitForm(data.field);
+            return false;
+        });
+    });
+</script>
+</body>
+</html>
+<? end ?>

@@ -1,0 +1,84 @@
+<? define "index/editpwd.htm" ?>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>设置我的密码</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+</head>
+<body>
+
+  <div class="layui-fluid layui-form">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">修改密码</div>
+          <div class="layui-card-body" pad15>
+            
+            <div class="layui-form" lay-filter="">
+              <div class="layui-form-item">
+                <label class="layui-form-label">当前密码</label>
+                <div class="layui-input-inline">
+                  <input type="password" name="oldPassword" lay-verify="required"  class="layui-input">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">新密码</label>
+                <div class="layui-input-inline">
+                  <input type="password" name="password"  lay-verify="required" autocomplete="off" id="LAY_password" class="layui-input">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">确认新密码</label>
+                <div class="layui-input-inline">
+                  <input type="password" name="repassword"  lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <div class="layui-input-block">
+                  <button class="layui-btn" lay-submit lay-filter="LAY-user-login-submit">确认修改</button>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/layui/layui.js"></script>
+  <script>
+    layui.use(function () {
+      var $ = layui.$;
+      var layer = layui.layer;
+      var form = layui.form;
+
+	form.on('submit(LAY-user-login-submit)', function(obj){
+		$.ajax({
+			url: '?module=index&act=main&do=editpwd',
+			data: obj.field,
+			type: 'post',
+			dataType: 'json',
+			success: function (res) {
+				if (res.code === 0) {
+					 window.top.location.href='./';
+				}else {
+					if (res.msg) {
+						layer.msg(res.msg, {icon: 5});
+					} else layer.msg('失败，请重试', {icon: 5});
+				}
+			},
+			error: function (xhr) {
+
+			}
+		});
+	});
+ });
+  </script>
+</body>
+</html>
+<?end?>
