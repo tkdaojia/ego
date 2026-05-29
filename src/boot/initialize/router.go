@@ -26,7 +26,6 @@ func Routers() *gin.Engine {
 
 	Router.LoadHTMLGlob("web/**/*")
 	Router.StaticFS("/static", http.Dir("./static"))
-	Router.StaticFS("/data", http.Dir("./data"))
 
 	Router.Use(middleware.Cors()) //跨域
 	PublicGroup := Router.Group("")

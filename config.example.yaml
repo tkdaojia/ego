@@ -17,9 +17,9 @@ mysql:
   port: "3306"
   prefix: "dy_"
   config: 'charset=utf8mb4&parseTime=True&loc=Local'
-  db-name: 'egosrc'
-  username: 'root'
-  password: 'root'
+  db-name: ''
+  username: ''
+  password: ''
   max-idle-conns: 10
   max-open-conns: 100
   conn-max-lifetime: 0
@@ -32,9 +32,9 @@ pgsql:
   port: "5432"
   prefix: "dy_"
   config: "sslmode=disable TimeZone=Asia/Shanghai"
-  db-name: "egosrc"
-  username: "ego"
-  password: "ego"
+  db-name: ""
+  username: ""
+  password: ""
   max-idle-conns: 10
   max-open-conns: 100
   conn-max-lifetime: 0
@@ -54,12 +54,6 @@ sqlite:
   conn-max-lifetime: 0
   log-mode: ""
   log-zap: false
-
-# jwt configuration
-jwt:
-  signing-key: 'qmPlus'
-  expires-time: 604800
-  buffer-time: 86400
 
 # zap logger configuration
 zap:

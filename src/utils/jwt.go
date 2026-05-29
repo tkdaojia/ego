@@ -1,38 +1,41 @@
 package utils
 
 import (
-	"ego/src/boot/global"
-	"github.com/dgrijalva/jwt-go"
+	"fmt"
+	"github.com/golang-jwt/jwt/v5"
 	"time"
 )
 
-type JWTClaims struct { // token里面添加用户信息，验证token后可能会用到用户信息
-	jwt.StandardClaims
+type JWTClaims struct {
 	UserID   int      `json:"user_id"`
 	Account  string   `json:"account"`
 	Username string   `json:"username"`
 	Roles    []string `json:"roles"`
+	jwt.RegisteredClaims
 }
 
 var (
-	ExpireTime = 3600 * 24 // token有效期
+	Secret     = "Hello EGO" // JWT 加盐
+	ExpireTime = 3600 * 24   // token 有效期（秒）
 )
 
 func CreateJWT(id int, account string, username string, roles []string) string {
+	now := time.Now()
 	claims := &JWTClaims{
 		UserID:   id,
 		Account:  account,
 		Username: username,
 		Roles:    roles,
+		RegisteredClaims: jwt.RegisteredClaims{
+			IssuedAt:  jwt.NewNumericDate(now),
+			ExpiresAt: jwt.NewNumericDate(now.Add(time.Second * time.Duration(ExpireTime))),
+		},
 	}
-	claims.IssuedAt = time.Now().Unix()
-	claims.ExpiresAt = time.Now().Add(time.Second * time.Duration(ExpireTime)).Unix()
 	return getToken(claims)
 }
 
 func getToken(claims *JWTClaims) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	Secret := global.C_CONFIG.System.Appid
 	signedToken, err := token.SignedString([]byte(Secret))
 	if err != nil {
 		return ""
@@ -41,18 +44,19 @@ func getToken(claims *JWTClaims) string {
 }
 
 func DecodeJWT(strToken string) *JWTClaims {
-	Secret := global.C_CONFIG.System.Appid
 	token, err := jwt.ParseWithClaims(strToken, &JWTClaims{}, func(token *jwt.Token) (interface{}, error) {
+		// 🔴 安全防线：v5 依然需要强校验签名算法，防止 none 攻击
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
 		return []byte(Secret), nil
 	})
-	if err != nil {
+	if err != nil || !token.Valid {
 		return nil
 	}
+
 	claims, ok := token.Claims.(*JWTClaims)
 	if !ok {
-		return nil
-	}
-	if err := token.Claims.Valid(); err != nil {
 		return nil
 	}
 	return claims
