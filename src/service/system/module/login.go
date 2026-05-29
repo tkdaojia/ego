@@ -18,8 +18,6 @@ func RunLogin(c *gin.Context) {
 	switch act {
 	case "htm":
 		RunLoginHtm(c)
-	case "out":
-		RunLogOut(c)
 	default:
 		c.JSON(http.StatusNotFound, gin.H{"message": "action not found"})
 	}
@@ -27,24 +25,9 @@ func RunLogin(c *gin.Context) {
 
 func RunLoginHtm(c *gin.Context) {
 	webname := global.C_CONFIG.System.Webname
-	cookiename := global.C_CONFIG.System.Cookiename
 	c.HTML(200, "open/login.htm", gin.H{
-		"webname":    webname,
-		"cookiename": cookiename,
+		"webname": webname,
 	})
-}
-
-func RunLogOut(c *gin.Context) {
-	cookieName := "user_cookie"
-	if global.C_CONFIG.System.Cookiename != "" {
-		cookieName = global.C_CONFIG.System.Cookiename
-	}
-	host := c.Request.Host
-	if strings.Contains(host, ":") {
-		host = strings.Split(host, ":")[0]
-	}
-	c.SetCookie(cookieName, "", -1, "/", host, false, true)
-	c.Redirect(http.StatusFound, "/open/?module=login&act=htm")
 }
 
 func RunLoginPost(c *gin.Context) {
@@ -129,5 +112,15 @@ func RunLoginPost(c *gin.Context) {
 	}
 	db.Where("uid = ?", info.ID).Assign(online).FirstOrCreate(&online)
 
-	response.Result(200, signedToken, "登录成功", c)
+	c.SetCookie(
+		global.C_CONFIG.System.Cookiename, // Cookie 键名
+		signedToken,                       // Token 值
+		3600*24,                           // 有效期 1 天（需与 utils.ExpireTime 保持一致）
+		"/",                               // 全局路径有效
+		"",                                // 留空代表当前域名
+		false,                             // Secure: 如果是 HTTPS 环境，生产环境记得改为 true
+		true,                              // HttpOnly: 👈 开启此项，前端 JS 将无法通过 document.cookie 窃取 Token
+	)
+
+	response.Result(200, nil, "登录成功", c)
 }

@@ -45,7 +45,6 @@ func getToken(claims *JWTClaims) string {
 
 func DecodeJWT(strToken string) *JWTClaims {
 	token, err := jwt.ParseWithClaims(strToken, &JWTClaims{}, func(token *jwt.Token) (interface{}, error) {
-		// 🔴 安全防线：v5 依然需要强校验签名算法，防止 none 攻击
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}

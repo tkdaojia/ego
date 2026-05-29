@@ -185,7 +185,6 @@
 </div>
 
 <script src="/static/assets/js/jquery.min.js"></script>
-<script src="/static/assets/js/jq.cookie.min.js"></script>
 
 <script>
     function login() {
@@ -221,7 +220,6 @@
             dataType: 'json',
             success: function (data) {
                 if (data.code == 200) {
-                    $.cookie('<?.cookiename?>', data.data, { path: '/' });
                     var timestamp = (new Date()).valueOf();
                     window.top.location.href = "/admin/?module=index&act=main&do=first&t=" + timestamp;
                 } else {

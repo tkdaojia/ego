@@ -130,31 +130,18 @@
 </div>
 
 <script src="/static/admin/layui/layui.js"></script>
-<script src="/static/assets/js/jquery.min.js"></script>
-<script src="/static/assets/js/jq.cookie.min.js"></script>
 
 <script>
     layui.config({
         base: '../static/admin/' // 静态资源所在路径
     }).use(['index'],function () {
-
+        var $ = layui.$;
         $(document).on('click', '#logout-btn', function () {
-            $.removeCookie('<?.cookiename?>', { path: '/' });
-
             var timestamp = (new Date()).valueOf();
-            window.top.location.href = "/open/?module=login&act=htm&t=" + timestamp;
+            window.top.location.href = "?module=index&act=main&do=logout&t=" + timestamp;
         });
 
     });
-
-    function out() {
-        $.removeCookie('<?.cookiename?>',{ path: '/'});
-        var timestamp = (new Date()).valueOf();
-        window.top.location.href = "/open/?module=login&act=htm&t="+timestamp;
-    }
-
-
-
 </script>
 </body>
 </html>
