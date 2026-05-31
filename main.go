@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	global.C_VP = core.Viper()
+	global.C_VP = core.Viper("")
 	global.C_LOG = core.Zap()
 	initialize.Redis()
 	global.C_DB = initialize.Gorm()
