@@ -11,23 +11,23 @@ import (
 
 func InitApiRouter(Router *gin.RouterGroup) {
 	m := global.C_CONFIG.System
-
-	ZrRouter := Router.Group("/" + m.Webroute).Use(middleware.VerifyAuth())
+	//####框架自带
+	AdminRouter := Router.Group("/admin").Use(middleware.VerifyAuth())
 	{
-		ZrRouter.GET("/", ego.ApiZrcodeGet)
-		ZrRouter.POST("/", ego.ApiZrcodePost)
+		AdminRouter.GET("/", v1.ApiBaseGet)
+		AdminRouter.POST("/", v1.ApiBasePost)
 	}
-
 	OpenRouter := Router.Group("/open")
 	{
 		OpenRouter.GET("/", v1.ApiOpen)
 		OpenRouter.POST("/", v1.ApiOpenPost)
 	}
+	//###########
 
-	AdminRouter := Router.Group("/admin").Use(middleware.VerifyAuth())
+	ZrRouter := Router.Group("/" + m.Webroute).Use(middleware.VerifyAuth())
 	{
-		AdminRouter.GET("/", v1.ApiBaseGet)
-		AdminRouter.POST("/", v1.ApiBasePost)
+		ZrRouter.GET("/", ego.ApiZrcodeGet)
+		ZrRouter.POST("/", ego.ApiZrcodePost)
 	}
 
 	AppRouter := Router.Group("/app").Use(middleware.VerifyAuthApp())
