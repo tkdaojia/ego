@@ -6,12 +6,19 @@ import (
 	v1 "ego/src/api/v1"
 	"ego/src/boot/global"
 	"ego/src/boot/middleware"
+	"ego/src/utils"
 	"github.com/gin-gonic/gin"
 )
 
 func InitApiRouter(Router *gin.RouterGroup) {
 	m := global.C_CONFIG.System
 	//####框架自带
+	rootGroup := Router.Group("/").Use(middleware.VerifyAuth())
+	rootGroup.GET("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"timestamp": utils.GetTimestamp(),
+		})
+	})
 	AdminRouter := Router.Group("/admin").Use(middleware.VerifyAuth())
 	{
 		AdminRouter.GET("/", v1.ApiBaseGet)
