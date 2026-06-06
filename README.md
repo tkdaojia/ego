@@ -109,6 +109,6 @@ AppRouter.POST("/", app.ApiAppPost)
 > 项目使用、二次开发、定制需求、Go/Layui技术问题均可联系作者交流；框架持续迭代更新，入群获取最新版本、开发文档、示例源码。
 ### 联系方式
 扫码添加作者微信（备注：ego框架），交流进技术交流群：
-
-![作者微信二维码](http://www.wenxiaoxi.cc/images/wxx.png)
-
+<div style="text-align: left; margin: 10px 0;">
+  <img src="http://www.wenxiaoxi.cc/images/wxx.png" style="width: 200px; height: auto;" alt="作者微信二维码">
+</div>
