@@ -2,8 +2,13 @@
 
 一款基于 **Gin + Gorm + Redis + Zap + Layui** 搭建的轻量级后台快速开发框架，结构清晰、开箱即用，适合快速开发**后台管理系统、电商后台、订单管理、CRM、SAAS**等中小型业务系统。
 
-**GitHub**：https://github.com/tkdaojia/ego
-**Gitee**：https://gitee.com/cndouya/egoweb
+- **GitHub**：https://github.com/tkdaojia/ego
+- **Gitee**：https://gitee.com/cndouya/egoweb
+
+## 🔗 在线演示
+- **演示地址** http://wuji.wenxiaoxi.cc/
+- **测试账号** ego
+- **登录密码** helloego
 
 ## ✨ 技术栈
 - **Web框架**：Gin
