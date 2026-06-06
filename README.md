@@ -89,8 +89,8 @@ go run main.go
 ```go
 AppRouter := Router.Group("/myroute").Use(middleware.VerifyAuthApp())
 {
-    AppRouter.GET("/", app.ApiAppGet)
-    AppRouter.POST("/", app.ApiAppPost)
+AppRouter.GET("/", app.ApiAppGet)
+AppRouter.POST("/", app.ApiAppPost)
 }
 ```
 *系统会自动将其挂载到 `/api/app/app.go`（可以自己换文件），定义自己的module层*
@@ -102,3 +102,13 @@ AppRouter := Router.Group("/myroute").Use(middleware.VerifyAuthApp())
 
 ### 4. 编写业务代码并重启
 在生成的 `act` 和 `do` 中实现你的业务逻辑。开发完成后，重启 `main.go` 即可直接在 Layui 前端通过 Ajax 异步调用该接口。
+
+---
+
+## 💬 技术交流 & 框架答疑
+> 项目使用、二次开发、定制需求、Go/Layui技术问题均可联系作者交流；框架持续迭代更新，入群获取最新版本、开发文档、示例源码。
+### 联系方式
+扫码添加作者微信（备注：ego框架），交流进技术交流群：
+
+![作者微信二维码](http://www.wenxiaoxi.cc/images/wxx.png)
+

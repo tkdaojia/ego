@@ -43,7 +43,7 @@ func RunSysLogAuditGetdata(c *gin.Context) {
 
 	// 2. 获取前端搜索栏传过来的过滤参数
 	username := strings.TrimSpace(c.Query("username"))
-	//module := strings.TrimSpace(c.Query("module"))
+	module := strings.TrimSpace(c.Query("modules"))
 	status := cast.ToInt(c.Query("status"))
 
 	// 3. 构建动态查询 Scope（作用域代理）
@@ -52,6 +52,9 @@ func RunSysLogAuditGetdata(c *gin.Context) {
 		query = query.Where("username LIKE ?", "%"+username+"%")
 	}
 
+	if module != "" {
+		query = query.Where("module LIKE ?", module)
+	}
 	if status > 0 {
 		query = query.Where("status = ?", status)
 	}

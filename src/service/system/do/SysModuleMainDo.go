@@ -173,9 +173,13 @@ func RunSysmoduleUpdate(c *gin.Context) {
 
 // 删除接口
 func RunSysmoduleDel(c *gin.Context) {
+	req := model.SystemReqDel
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.OnFailure(c, msg.ReqParamErr)
+		return
+	}
 	db := utils.GetDB(c)
-
-	id := cast.ToInt(c.Query("id"))
+	id := req.Id
 	if id <= 0 {
 		response.OnFailure(c, msg.IdInvalidErr)
 		return

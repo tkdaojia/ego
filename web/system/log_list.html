@@ -20,7 +20,7 @@
                         <input type="text" name="username" placeholder="操作账号" autocomplete="off" class="layui-input layui-input-sm">
                     </div>
                     <div class="layui-inline">
-                        <input type="text" name="module" placeholder="模组(module)" autocomplete="off" class="layui-input layui-input-sm">
+                        <input type="text" name="modules" placeholder="模组(module)" autocomplete="off" class="layui-input layui-input-sm">
                     </div>
                     <div class="layui-inline">
                         <select name="status" lay-search>
@@ -44,7 +44,6 @@
 
 <script type="text/html" id="table-do-tool">
     <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"><i class="layui-icon layui-icon-about"></i>详情</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
 </script>
 
 <script type="text/html" id="statusTpl">
@@ -112,7 +111,7 @@
                 ,{field: 'status', title: '状态', width: 85, templet: '#statusTpl', align: 'center'}
                 ,{field: 'latency', title: '耗时', width: 95, templet: '#latencyTpl', align: 'right'}
                 ,{field: 'createdAt', title: '记录时间', width: 170, sort: true}
-                ,{title: '操作', width: 150, align: 'center', fixed: 'right', toolbar: '#table-do-tool'}
+                ,{title: '操作', width: 100, align: 'center', fixed: 'right', toolbar: '#table-do-tool'}
             ]]
             ,page: true
             ,limit: 20
@@ -125,23 +124,7 @@
             var data = obj.data;
             var id = data.id;
 
-            if (obj.event === 'del') {
-                layer.confirm('确定永久删除该条操作日志？', {icon: 3, title: '提示'}, function(index){
-                    $.ajax({
-                        url: '?module=syslog&act=main&do=del&id=' + id,
-                        type: 'get',
-                        dataType: 'json',
-                        success: function (res) {
-                            if (res.success || res.code === 0) {
-                                table.reload("LAY-table-list");
-                                layer.msg('删除成功', {icon: 1});
-                            } else {
-                                layer.msg(res.msg || '操作失败', {icon: 5});
-                            }
-                        }
-                    });
-                });
-            } else if (obj.event === 'detail') {
+             if (obj.event === 'detail') {
                 // 点击详情弹框查看 JSON 文本和大文本内容
                 layer.open({
                     type: 2

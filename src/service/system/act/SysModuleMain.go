@@ -13,8 +13,6 @@ func RunSysModuleMainGet(c *gin.Context) {
 		web.RunSysmoduleList(c)
 	case "add":
 		web.RunSysmoduleAdd(c)
-	case "del":
-		web.RunSysmoduleDel(c)
 	case "getdata":
 		web.RunSysmoduleGetdata(c)
 	default:
@@ -29,6 +27,8 @@ func RunSysModuleMainPost(c *gin.Context) {
 		web.RunSysmoduleCrate(c)
 	case "update":
 		web.RunSysmoduleUpdate(c)
+	case "del":
+		web.RunSysmoduleDel(c)
 	default:
 		c.JSON(http.StatusNotFound, gin.H{"message": "action not found"})
 	}

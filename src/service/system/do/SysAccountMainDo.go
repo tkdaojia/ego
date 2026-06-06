@@ -174,15 +174,38 @@ func RunSysAccountAdd(c *gin.Context) {
 }
 
 func RunSysAccountDel(c *gin.Context) {
-	db := utils.GetDB(c)
-	id := cast.ToUint(c.Query("id"))
-
-	result := db.Delete(&model.SysAccount{}, id)
-	if result.RowsAffected != 1 {
-		response.BackMsgErr("删除异常", c)
+	req := model.SystemReqDel
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.OnFailure(c, msg.ReqParamErr)
 		return
 	}
-	response.BackMsgOk(c)
+	db := utils.GetDB(c)
+	id := req.Id
+	if id <= 0 {
+		response.OnFailure(c, msg.IdInvalidErr)
+		return
+	}
+	var account model.SysAccount
+
+	if err := db.Where("id = ?", id).First(&account).Error; err != nil {
+		response.OnFailure(c, msg.SqlFindErr)
+		return
+	}
+
+	account.Status = 2
+	if err := db.Save(&account).Error; err != nil {
+		response.OnFailure(c, msg.SqlUpdateErr)
+		return
+	}
+
+	utils.Pack.AuditLog.SaveAuditLog(
+		c,
+		fmt.Sprintf("停用账户 [%s]", account.Account),
+		map[string]any{"id": id},
+		account,
+		nil,
+	)
+	response.OnSuccess(c)
 }
 
 func RunSysAccountCreate(c *gin.Context) {

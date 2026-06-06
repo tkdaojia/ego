@@ -13,8 +13,6 @@ func RunSysMenuMainGet(c *gin.Context) {
 		web.RunSysMenuList(c)
 	case "add":
 		web.RunSysMenuAdd(c)
-	case "del":
-		web.RunSysMenuDel(c)
 	case "getdata":
 		web.RunSysMenuGetdata(c)
 	default:
@@ -29,6 +27,8 @@ func RunSysMenuMainPost(c *gin.Context) {
 		web.RunSysMenuCrate(c)
 	case "update":
 		web.RunSysMenuUpdate(c)
+	case "del":
+		web.RunSysMenuDel(c)
 	default:
 		c.JSON(http.StatusNotFound, gin.H{"message": "action not found"})
 	}

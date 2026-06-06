@@ -116,11 +116,15 @@
       if(obj.event === 'del'){
         layer.confirm('确定删除？', function(index){
           $.ajax({
-                url: '?module=sysaccount&act=main&do=del&id='+id,
-                type: 'get',
-                dataType: 'json',
+                url: '?module=sysaccount&act=main&do=del',
+                    type: 'post',
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        id: id
+                    }),
                 success: function (res) {
-                    if (res.success) {
+                    if (res.code === 0) {
 						table.reload("LAY-table-list");
 						layer.msg('完成',{icon:1});
                     }else {

@@ -120,11 +120,14 @@
 		} else
 		if(obj.event === 'del'){
         layer.confirm('确定删除？', function(index){
-          
           $.ajax({
-                url: '?module=sysdict&act=main&do=del&id='+id,
-                type: 'get',
+                url: '?module=sysdict&act=main&do=del',
+                type: 'post',
                 dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    id: id
+                }),
                 success: function (res) {
                     if (res.code === 0) {
 						table.reload("LAY-app-goods-apply-list");

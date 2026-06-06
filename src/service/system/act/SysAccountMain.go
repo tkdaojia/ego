@@ -13,8 +13,7 @@ func RunSysAccountMainGet(c *gin.Context) {
 		web.RunSysAccountList(c)
 	case "add":
 		web.RunSysAccountAdd(c)
-	case "del":
-		web.RunSysAccountDel(c)
+
 	case "getdata":
 		web.RunSysAccountGetdata(c)
 	default:
@@ -29,6 +28,8 @@ func RunSysAccountMainPost(c *gin.Context) {
 		web.RunSysAccountCreate(c)
 	case `update`:
 		web.RunSysAccountUpdate(c)
+	case "del":
+		web.RunSysAccountDel(c)
 	default:
 		c.JSON(http.StatusNotFound, gin.H{"message": "action not found"})
 	}

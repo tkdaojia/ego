@@ -15,8 +15,7 @@ func RunSysGroupMainGet(c *gin.Context) {
 		web.RunSysGroupMainAdd(c)
 	case `getdata`:
 		web.RunSysGroupsMainGetdata(c)
-	case `del`:
-		web.RunSysGroupMainDel(c)
+
 	default:
 		c.JSON(http.StatusNotFound, gin.H{"message": "action not found"})
 	}
@@ -29,6 +28,8 @@ func RunSysGroupMainPost(c *gin.Context) {
 		web.RunSysGroupCreate(c)
 	case `update`:
 		web.RunSysGroupUpdate(c)
+	case `del`:
+		web.RunSysGroupMainDel(c)
 	default:
 		c.JSON(http.StatusNotFound, gin.H{"message": "action not found"})
 	}

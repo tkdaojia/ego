@@ -12,8 +12,6 @@ func RunSysDictMainGet(c *gin.Context) {
 		web.RunSysDictList(c)
 	case "add":
 		web.RunSysDictAdd(c)
-	case "del":
-		web.RunSysDictDel(c)
 	case "getdata":
 		web.RunSysDictGetdata(c)
 	case "set":
@@ -36,5 +34,7 @@ func RunSysDictMainPost(c *gin.Context) {
 		web.RunSysDictUpdate(c)
 	case "set":
 		web.RunSysDictSetPost(c)
+	case "del":
+		web.RunSysDictDel(c)
 	}
 }

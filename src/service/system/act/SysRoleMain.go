@@ -13,8 +13,6 @@ func RunSysRoleMainGet(c *gin.Context) {
 		web.RunSysRoleList(c)
 	case "add":
 		web.RunSysRoleAdd(c)
-	case "del":
-		web.RunSysRoleDel(c)
 	case "getdata":
 		web.RunSysRoleGetdata(c)
 	case "menutree":
@@ -41,6 +39,8 @@ func RunSysRoleMainPost(c *gin.Context) {
 		web.RunSysRoleUpdateMenu(c)
 	case "updatemodule":
 		web.RunSysRoleUpdateModule(c)
+	case "del":
+		web.RunSysRoleDel(c)
 	default:
 		c.JSON(http.StatusNotFound, gin.H{"message": "action not found"})
 	}

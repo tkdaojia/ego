@@ -117,9 +117,13 @@ func RunSysMenuGetdata(c *gin.Context) {
 
 // 删除菜单接口
 func RunSysMenuDel(c *gin.Context) {
+	req := model.SystemReqDel
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.OnFailure(c, msg.ReqParamErr)
+		return
+	}
 	db := utils.GetDB(c)
-
-	id := cast.ToUint(c.Query("id"))
+	id := req.Id
 	if id == 0 {
 		response.OnFailure(c, "无效的菜单ID")
 		return
@@ -151,7 +155,7 @@ func RunSysMenuDel(c *gin.Context) {
 			return
 		}
 		// 记录系统级日志
-		utils.LogSqlErr(c, "Delete_SysMenu", err, zap.Uint("id", id))
+		utils.LogSqlErr(c, "Delete_SysMenu", err, zap.Int("id", id))
 		response.OnFailure(c, "删除菜单失败，请稍后再试")
 		return
 	}
