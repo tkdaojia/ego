@@ -19,11 +19,13 @@ func VerifyAuth() gin.HandlerFunc {
 		user, _ := c.Cookie(global.C_CONFIG.System.Cookiename)
 		if user == "" {
 			gotoLogin(c)
+			c.Abort()
 			return
 		}
 		sz := utils.DecodeJWT(user)
 		if sz == nil {
 			gotoLogin(c)
+			c.Abort()
 			return
 		}
 
@@ -41,6 +43,7 @@ func VerifyAuth() gin.HandlerFunc {
 
 		if len(module) == 0 {
 			gotoLogin(c)
+			c.Abort()
 			return
 		}
 

@@ -6,10 +6,10 @@
 - **Gitee**：https://gitee.com/cndouya/egoweb
 
 ## 🔗 应用演示
-- **系统说明** 基于Ego框架研发的项目管理系统
-- **演示地址**：[http://wuji.wenxiaoxi.cc/](http://wuji.wenxiaoxi.cc/)
-- **测试账号** ego
-- **登录密码** helloego
+> **基于Ego框架研发的项目管理系统**
+**演示地址：**[http://wuji.wenxiaoxi.cc/](http://wuji.wenxiaoxi.cc/)
+- **测试账号：** ego
+- **登录密码：** helloego
 
 ## ✨ 技术栈
 - **Web框架**：Gin
