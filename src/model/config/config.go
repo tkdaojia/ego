@@ -7,4 +7,5 @@ type Server struct {
 	Pgsql  Pgsql  `mapstructure:"pgsql" json:"pgsql" yaml:"pgsql"`
 	Sqlite Sqlite `mapstructure:"sqlite" json:"sqlite" yaml:"sqlite"`
 	System System `mapstructure:"system" json:"system" yaml:"system"`
+	Grpc   Grpc   `mapstructure:"grpc" json:"grpc" yaml:"grpc"`
 }

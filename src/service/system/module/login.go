@@ -1,16 +1,19 @@
 package service
 
 import (
+	"context"
 	"ego/src/boot/global"
 	"ego/src/model/basic"
 	"ego/src/model/response"
 	"ego/src/utils"
+	pb "ego/src/zrgrpc"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cast"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"strings"
+	"time"
 )
 
 func RunLogin(c *gin.Context) {
@@ -51,44 +54,80 @@ func RunLoginPost(c *gin.Context) {
 	}
 
 	var info model.SysAccount
-	err := db.Model(&model.SysAccount{}).
-		Select("id", "account", "truename", "password", "status", "login_count", "role_id").
-		Where("account = ?", username).
-		First(&info).Error
+	//中台数据验证
+	if global.C_CONFIG.System.Zrlogin == 1 && global.C_GRPC != nil {
+		// 实例化客户端
+		client := pb.NewGreeterClient(global.C_GRPC)
 
-	if err != nil {
-		utils.Pack.AuditLog.SaveAuditLog(c, fmt.Sprintf("异常用户登陆 [%s]", param.Username), param, nil, nil)
-		response.OnFailure(c, "用户名或密码错误")
-		return
+		// 设置 1 秒超时控制
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		defer cancel()
+
+		resb, err := client.Login(ctx, &pb.LoginRequest{Account: username, Password: password})
+		if err != nil {
+			response.OnFailure(c, err.Error())
+			return
+		}
+		if resb.Success == false {
+			response.OnFailure(c, resb.Errmsg)
+			return
+		}
+
+		db.Model(&model.SysAccount{}).Where("account = ?", username).Find(&info)
+
+		if info.ID < 1 {
+			//自定义写入子系统相关登陆表
+			hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+
+			info.Account = username
+			info.Truename = resb.GetUsername()
+			info.Password = string(hashedPassword)
+			info.Role_id = "1"
+			info.Sysgroup = "2"
+			info.Status = 1
+			db.Create(&info)
+		}
+
+	} else {
+		err := db.Model(&model.SysAccount{}).
+			Select("id", "account", "truename", "password", "status", "login_count", "role_id").
+			Where("account = ?", username).
+			First(&info).Error
+
+		if err != nil {
+			utils.Pack.AuditLog.SaveAuditLog(c, fmt.Sprintf("异常用户登陆 [%s]", param.Username), param, nil, nil)
+			response.OnFailure(c, "用户名或密码错误")
+			return
+		}
+
+		// 3. 校验账号是否被停用
+		if info.Status != 1 {
+			utils.Pack.AuditLog.SaveAuditLog(c, fmt.Sprintf("停用账号登陆拦截 [%s]", info.Account), param, nil, nil)
+			response.OnFailure(c, "该账号已被停用，请联系管理员")
+			return
+		}
+
+		isPasswordCorrect := false
+
+		if err := bcrypt.CompareHashAndPassword([]byte(info.Password), []byte(password)); err == nil {
+			isPasswordCorrect = true
+		}
+
+		if !isPasswordCorrect {
+			utils.Pack.AuditLog.SaveAuditLog(c, fmt.Sprintf("用户登陆密码错误 [%s]", param.Username), param, nil, nil)
+			response.OnFailure(c, "用户名或密码错误")
+			return
+		}
+
+		utils.Pack.AuditLog.SaveAuditLog(c, fmt.Sprintf("账号登陆 [%s]", info.Account), param, nil, nil)
+
+		updates := map[string]interface{}{
+			"lastlogin":   utils.GetTimestamp(),
+			"login_count": info.Login_count + 1,
+		}
+
+		db.Model(&info).Updates(updates)
 	}
-
-	// 3. 校验账号是否被停用
-	if info.Status != 1 {
-		utils.Pack.AuditLog.SaveAuditLog(c, fmt.Sprintf("停用账号登陆拦截 [%s]", info.Account), param, nil, nil)
-		response.OnFailure(c, "该账号已被停用，请联系管理员")
-		return
-	}
-
-	isPasswordCorrect := false
-
-	if err := bcrypt.CompareHashAndPassword([]byte(info.Password), []byte(password)); err == nil {
-		isPasswordCorrect = true
-	}
-
-	if !isPasswordCorrect {
-		utils.Pack.AuditLog.SaveAuditLog(c, fmt.Sprintf("用户登陆密码错误 [%s]", param.Username), param, nil, nil)
-		response.OnFailure(c, "用户名或密码错误")
-		return
-	}
-
-	utils.Pack.AuditLog.SaveAuditLog(c, fmt.Sprintf("账号登陆 [%s]", info.Account), param, nil, nil)
-
-	updates := map[string]interface{}{
-		"lastlogin":   utils.GetTimestamp(),
-		"login_count": info.Login_count + 1,
-	}
-
-	db.Model(&info).Updates(updates)
 
 	var roles []string
 	if info.Role_id != "" {

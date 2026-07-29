@@ -12,6 +12,8 @@ func main() {
 	global.C_LOG = core.Zap()
 	initialize.Redis()
 	global.C_DB = initialize.Gorm()
+
+	global.C_GRPC = core.Grpc()
 	backrun.BackRunQueueTask()
 	core.RunServer()
 }

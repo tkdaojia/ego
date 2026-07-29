@@ -11,4 +11,5 @@ type System struct {
 	Webversion string `mapstructure:"webversion" json:"webversion" yaml:"webversion"`
 	Cookiename string `mapstructure:"cookiename" json:"cookiename" yaml:"cookiename"`
 	Appid      string `mapstructure:"appid" json:"appid" yaml:"appid"`
+	Zrlogin    int    `mapstructure:"zrlogin" json:"zrlogin" yaml:"zrlogin"`
 }

@@ -10,6 +10,7 @@ system:
   webversion: 'V1.0.5'
   cookiename: 'egoframe'
   appid: '32d1198e3a2268d29069ab1ea3fbu7e8'
+  zrlogin: 1
 
 # mysql connect configuration
 mysql:
@@ -73,7 +74,12 @@ redis:
   addr: '127.0.0.1:6379'
   password: ''
 
-
+# grpc configuration
+grpc:
+  host: 'localhost'
+  addr: 50051
+  token: ''
+  open: true
 
 
 

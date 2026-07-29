@@ -5,6 +5,7 @@ import (
 	"ego/src/model/config"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
+	grpc "google.golang.org/grpc"
 	"gorm.io/gorm"
 )
 
@@ -14,4 +15,5 @@ var (
 	C_REDIS  model.C_RedisCache
 	C_CONFIG config.Server
 	C_LOG    *zap.Logger
+	C_GRPC   *grpc.ClientConn
 )
