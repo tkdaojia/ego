@@ -1,0 +1,55 @@
+<? define "ego/autologin.htm" ?>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>跳转登陆</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f5f7fa; font-family: "Microsoft YaHei", sans-serif; }
+        .error-box {
+            max-width: 500px;
+            margin: 100px auto;
+            padding: 40px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        .error-title {
+            font-size: 20px;
+            color: #67c23a; /* 成功绿色 */
+            margin-bottom: 20px;
+        }
+        .error-msg {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .back-btn {
+            display: inline-block;
+            padding: 10px 24px;
+            background: #67c23a;
+            color: #fff;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+        .back-btn:hover { background: #85ce61; }
+    </style>
+</head>
+<body>
+<div class="error-box">
+    <div class="error-title">操作成功，正在跳转...</div>
+    <div class="error-msg">如未自动跳转，请点击下方按钮</div>
+    <a class="back-btn" href="<? .url ?>">立即跳转</a>
+</div>
+
+<script>
+    // 自动跳转，1秒后执行
+    setTimeout(function(){
+        location.href = "<? .url ?>";
+    },1000);
+</script>
+</body>
+</html>
+<? end ?>

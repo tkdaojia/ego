@@ -55,7 +55,7 @@ func RunLoginPost(c *gin.Context) {
 
 	var info model.SysAccount
 	//中台数据验证
-	if global.C_CONFIG.System.Zrlogin == 1 && global.C_GRPC != nil {
+	if global.C_CONFIG.System.Zrlogin && global.C_GRPC != nil {
 		// 实例化客户端
 		client := pb.NewGreeterClient(global.C_GRPC)
 
@@ -162,4 +162,111 @@ func RunLoginPost(c *gin.Context) {
 	)
 
 	response.Result(200, nil, "登录成功", c)
+}
+
+// 从中台自动登陆子系统
+func RunAutoLogin(c *gin.Context) {
+	if global.C_CONFIG.System.Zrlogin == false {
+		response.OnFailure(c, "子系统需开启远程登陆,请修改配置文件")
+		return
+	}
+	//解密token
+	ztoken := c.Query("ztoken")
+	appid := global.C_CONFIG.System.Appid
+	uinfo, err := utils.Pack.Aes256.Decrypt([]byte(appid), ztoken)
+	if err != nil {
+		response.OnFailure(c, "Token 无效"+err.Error())
+		return
+	}
+	//数据检测
+	arr := strings.Split(uinfo, ",")
+	if len(arr[0]) == 0 {
+		response.OnFailure(c, "帐号错误")
+		return
+	}
+	if len(arr[1]) == 0 {
+		response.OnFailure(c, "用户姓名错误")
+		return
+	}
+	account := arr[0]
+	name := arr[1]
+
+	// 实例化客户端
+	client := pb.NewGreeterClient(global.C_GRPC)
+
+	// 设置 1 秒超时控制
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	//读取中台用户信息
+	resb, err := client.GetUser(ctx, &pb.UserRequest{Mobile: account})
+	if err != nil {
+		response.OnFailure(c, err.Error())
+		return
+	}
+	fmt.Println(resb)
+	if resb.Name != name {
+		response.OnFailure(c, "帐号与姓名不匹配")
+		return
+	}
+	if resb.State != 1 {
+		response.OnFailure(c, "帐号已停用")
+		return
+	}
+
+	db := utils.GetDB(c)
+	var info model.SysAccount
+	//更登陆模块相同处理
+	db.Model(&model.SysAccount{}).Where("account = ?", account).Find(&info)
+
+	if info.ID < 1 {
+		password := "123456"
+		//自定义写入子系统相关登陆表
+		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+
+		info.Account = account
+		info.Truename = resb.Name
+		info.Password = string(hashedPassword)
+		info.Role_id = "1"
+		info.Sysgroup = "2"
+		info.Status = 1
+		db.Create(&info)
+	}
+
+	//子系统面登陆处理
+	var roles []string
+	if info.Role_id != "" {
+		roleIDs := strings.Split(info.Role_id, ",")
+		var roleArr []model.SysRole
+		// 批量捞出角色标识符
+		db.Select("name").Where("id IN ?", roleIDs).Find(&roleArr)
+		for _, v := range roleArr {
+			if v.Name != "" {
+				roles = append(roles, v.Name)
+			}
+		}
+	}
+	signedToken := utils.CreateJWT(cast.ToInt(info.ID), info.Account, info.Truename, roles)
+
+	online := model.Online{
+		Uid:    info.ID,
+		Ip:     c.ClientIP(),
+		Active: utils.GetTimestamp(),
+		Status: 1,
+	}
+	db.Where("uid = ?", info.ID).Assign(online).FirstOrCreate(&online)
+
+	c.SetCookie(
+		global.C_CONFIG.System.Cookiename, // Cookie 键名
+		signedToken,                       // Token 值
+		3600*24,                           // 有效期 1 天（需与 utils.ExpireTime 保持一致）
+		"/",                               // 全局路径有效
+		"",                                // 留空代表当前域名
+		false,                             // Secure: 如果是 HTTPS 环境，生产环境记得改为 true
+		true,                              // HttpOnly: 👈 开启此项，前端 JS 将无法通过 document.cookie 窃取 Token
+	)
+
+	c.HTML(200, "ego/autologin.htm", gin.H{
+		"url": "/admin/?module=index&act=main&do=first",
+	})
 }

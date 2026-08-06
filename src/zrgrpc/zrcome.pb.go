@@ -195,6 +195,7 @@ type UserResponse struct {
 	Userid        string                 `protobuf:"bytes,2,opt,name=userid,proto3" json:"userid,omitempty"`
 	Title         string                 `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
 	Mobile        string                 `protobuf:"bytes,4,opt,name=mobile,proto3" json:"mobile,omitempty"`
+	State         int32                  `protobuf:"varint,5,opt,name=state,proto3" json:"state,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -255,6 +256,13 @@ func (x *UserResponse) GetMobile() string {
 		return x.Mobile
 	}
 	return ""
+}
+
+func (x *UserResponse) GetState() int32 {
+	if x != nil {
+		return x.State
+	}
+	return 0
 }
 
 type LoginRequest struct {
@@ -389,12 +397,13 @@ const file_proto_zrcome_proto_rawDesc = "" +
 	"\amessage\x18\x01 \x01(\tR\amessage\"\a\n" +
 	"\x05Empty\"%\n" +
 	"\vUserRequest\x12\x16\n" +
-	"\x06mobile\x18\x01 \x01(\tR\x06mobile\"h\n" +
+	"\x06mobile\x18\x01 \x01(\tR\x06mobile\"~\n" +
 	"\fUserResponse\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x16\n" +
 	"\x06userid\x18\x02 \x01(\tR\x06userid\x12\x14\n" +
 	"\x05title\x18\x03 \x01(\tR\x05title\x12\x16\n" +
-	"\x06mobile\x18\x04 \x01(\tR\x06mobile\"`\n" +
+	"\x06mobile\x18\x04 \x01(\tR\x06mobile\x12\x14\n" +
+	"\x05state\x18\x05 \x01(\x05R\x05state\"`\n" +
 	"\fLoginRequest\x12\x18\n" +
 	"\aaccount\x18\x01 \x01(\tR\aaccount\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1a\n" +

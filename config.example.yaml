@@ -10,7 +10,7 @@ system:
   webversion: 'V1.0.5'
   cookiename: 'egoframe'
   appid: '32d1198e3a2268d29069ab1ea3fbu7e8'
-  zrlogin: 1
+  zrlogin: true
 
 # mysql connect configuration
 mysql:

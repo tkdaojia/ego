@@ -60,6 +60,8 @@ func ApiOpen(c *gin.Context) {
 		service.RunLogin(c)
 	case "out":
 		c.HTML(200, "open/out.htm", gin.H{})
+	case "autologin":
+		service.RunAutoLogin(c)
 	default:
 		response.OkWithMessage("Hi1", c)
 	}

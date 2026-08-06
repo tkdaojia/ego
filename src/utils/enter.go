@@ -1,9 +1,9 @@
 package utils
 
 import (
+	"ego/src/utils/aes"
 	"ego/src/utils/auditLog"
 	"ego/src/utils/datetime"
-	"ego/src/utils/dingding"
 	"ego/src/utils/rediscache"
 	sm "ego/src/utils/sm4"
 	"ego/src/utils/xls"
@@ -17,5 +17,5 @@ type pack struct {
 	Xls        xls.Xls
 	DateTime   datetime.DateTime
 	SM4        sm.SM4
-	Ding       dingding.DingDing
+	Aes256     aes.Aes256
 }
